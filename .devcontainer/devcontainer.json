@@ -1,0 +1,12 @@
+{
+    "name": "fophelper",
+    "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:0-18",
+    "customizations": {
+        "vscode": {
+            "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+        }
+    },
+    "forwardPorts": [3000],
+    "postCreateCommand": "npm install",
+    "remoteUser": "node"
+}
