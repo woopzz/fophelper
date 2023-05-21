@@ -10,6 +10,9 @@ const config = {
         path: buildPath('dist'),
         clean: true,
     },
+    resolve: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    },
     devtool: 'eval-source-map',
     devServer: {
         static: './dist',
