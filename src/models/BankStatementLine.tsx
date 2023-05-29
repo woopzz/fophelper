@@ -6,8 +6,8 @@ export const CSV_FIELD_TO_PAYMENT_CSV_FIELD = {
     'Рахунок': 'account',
     'Валюта': 'currency',
 
-    'Номер документа': 'docNo',
-    'Дата операции': 'dateStr',
+    'Номер документу': 'docNo',
+    'Дата операції': 'dateStr',
     'МФО банку': 'agentBankCode',
     'Назва банку': 'agentBank',
 
