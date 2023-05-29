@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, ChangeEventHandler } from 'react';
 
 import useTheme from '@mui/material/styles/useTheme';
+import Input from '@mui/material/Input';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,6 +13,7 @@ import MuiBox from '@mui/material/Box';
 import MuiToolbar from '@mui/material/Toolbar';
 import MuiIconButton from '@mui/material/IconButton';
 import MuiSwitch from '@mui/material/Switch';
+import MuiUploadIcon from '@mui/icons-material/Upload';
 import MuiTableRowsIcon from '@mui/icons-material/TableRows';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiList from '@mui/material/List';
@@ -19,21 +21,41 @@ import MuiListItem from '@mui/material/ListItem';
 import MuiListItemText from '@mui/material/ListItemText';
 import MuiListSubheader from '@mui/material/ListSubheader';
 
-import { Payment, CSV_FIELD_TO_PAYMENT_CSV_FIELD, PaymentFieldsFromCsv } from '../models/BankStatementLine';
+import {
+    Payment,
+    CSV_FIELD_TO_PAYMENT_CSV_FIELD,
+    PaymentFieldsFromCsv,
+    sortPaymentsByDate,
+} from '../models/BankStatementLine';
 import useWindowInnerWidth from '../hooks/useWindowInnerWidth';
+import { loadPayments } from '../services/bsl_csv';
 
 const SIDE_SHEET_WIDTH = 256;
 
-interface BankStatementListProps {
-    payments: Payment[];
-}
-
-export const BankStatementList = ({ payments }: BankStatementListProps) => {
+export const BankStatementList = () => {
     const theme = useTheme();
     const screenWidth = useWindowInnerWidth();
 
     const [shownColumns, setShownColumns] = useState<Array<PaymentFieldsFromCsv>>(['dateStr', 'note', 'amountStr']);
     const [showColumnsSideSheet, setShowColumnsSideSheet] = useState(false);
+
+    const [payments, setPayments] = useState<Payment[]>([]);
+    const inputEl = useRef<HTMLInputElement>(null);
+
+    const handleImportButtonClick = () => inputEl.current?.click();
+
+    const handleFileInputChange: ChangeEventHandler<HTMLInputElement> = async (ev) => {
+        const files = ev.target.files;
+        if (files !== null && files.length > 0) {
+            const newPayments = await loadPayments(files[0]);
+
+            const mapDocNoOnPayment = new Map<Payment['docNo'], Payment>();
+            for (const payment of [...payments, ...newPayments]) {
+                mapDocNoOnPayment.set(payment.docNo, payment);
+            }
+            setPayments(sortPaymentsByDate(Array.from(mapDocNoOnPayment.values()), { reverse: true }));
+        }
+    };
 
     const toggleShownColumns = (column: PaymentFieldsFromCsv) => {
         if (shownColumns.includes(column)) {
@@ -50,14 +72,20 @@ export const BankStatementList = ({ payments }: BankStatementListProps) => {
     const shouldDisplayDrawerPermanently = (screenWidth - theme.breakpoints.values.lg) / 2 > SIDE_SHEET_WIDTH;
 
     const buttonshowColumnsSideSheet = !shouldDisplayDrawerPermanently && (
-        <MuiIconButton onClick={() => setShowColumnsSideSheet(!showColumnsSideSheet)} sx={{ marginLeft: 'auto' }}>
+        <MuiIconButton onClick={() => setShowColumnsSideSheet(!showColumnsSideSheet)}>
             <MuiTableRowsIcon />
         </MuiIconButton>
     );
 
     return (
         <Paper>
-            <MuiToolbar variant="dense">{buttonshowColumnsSideSheet}</MuiToolbar>
+            <MuiToolbar variant="dense">
+                <Input type="file" onChange={handleFileInputChange} inputRef={inputEl} sx={{ display: 'none' }} />
+                <MuiIconButton onClick={handleImportButtonClick} sx={{ marginLeft: 'auto' }}>
+                    <MuiUploadIcon />
+                </MuiIconButton>
+                {buttonshowColumnsSideSheet}
+            </MuiToolbar>
             <MuiDrawer
                 anchor="right"
                 variant={shouldDisplayDrawerPermanently ? 'permanent' : 'temporary'}
