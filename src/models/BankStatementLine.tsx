@@ -18,8 +18,8 @@ export const CSV_FIELD_TO_PAYMENT_CSV_FIELD = {
     'Призначення платежу': 'note',
 } as const;
 
-type CsvFields = keyof typeof CSV_FIELD_TO_PAYMENT_CSV_FIELD;
-type PaymentFieldsFromCsv = (typeof CSV_FIELD_TO_PAYMENT_CSV_FIELD)[CsvFields];
+export type CsvFields = keyof typeof CSV_FIELD_TO_PAYMENT_CSV_FIELD;
+export type PaymentFieldsFromCsv = (typeof CSV_FIELD_TO_PAYMENT_CSV_FIELD)[CsvFields];
 
 type CsvPayment = Record<PaymentFieldsFromCsv, string>;
 
