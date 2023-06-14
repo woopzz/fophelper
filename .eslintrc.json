@@ -7,7 +7,8 @@
         "eslint:recommended",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
-        "prettier"
+        "prettier",
+        "plugin:react-hooks/recommended"
     ],
     "overrides": [],
     "parser": "@typescript-eslint/parser",
@@ -15,10 +16,9 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
+    "plugins": ["react", "react-hooks", "@typescript-eslint"],
     "rules": {
-        "react/react-in-jsx-scope": "off",
-        "quotes": ["error", "single"]
+        "react/react-in-jsx-scope": "off"
     },
     "ignorePatterns": ["webpack.config.js"]
 }
