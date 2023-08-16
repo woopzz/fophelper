@@ -1,6 +1,8 @@
 import { useCallback, useReducer } from 'react';
 import { downloadFile, fetchBSLsCSV, getOrCreateRootFolder } from '../services/googleDrive';
 import { loadPaymentsFromString } from '../services/bsl_csv';
+import { appendPayments } from '../slices/payments';
+import { useAppDispatch } from './store';
 
 type State = { status: 'pending' } | { status: 'synced' } | { status: 'error'; message: string };
 type Action = { type: 'runSync' } | { type: 'success' } | { type: 'failure'; message: string };
@@ -22,8 +24,9 @@ const stateReducer = (state: State, action: Action): State => {
     }
 };
 
-function useGoogleDrive({ appendPayments }: { appendPayments: any }) {
-    const [state, dispatch] = useReducer(stateReducer, initState);
+function useGoogleDrive() {
+    const [state, stateDispatch] = useReducer(stateReducer, initState);
+    const dispatch = useAppDispatch();
 
     const sync = useCallback(async () => {
         if (state.status === 'pending') {
@@ -37,12 +40,13 @@ function useGoogleDrive({ appendPayments }: { appendPayments: any }) {
             const rawCSV = await downloadFile({ fileId: bslFileId });
             console.log(rawCSV);
 
-            appendPayments(loadPaymentsFromString(rawCSV));
+            const payments = loadPaymentsFromString(rawCSV);
+            dispatch(appendPayments(payments));
         } catch (error) {
             console.debug('sync error: ', error);
-            dispatch({ type: 'failure', message: 'Помилка синхронізації' });
+            stateDispatch({ type: 'failure', message: 'Помилка синхронізації' });
         }
-    }, [state, appendPayments]);
+    }, [state]);
 
     return { state, sync };
 }

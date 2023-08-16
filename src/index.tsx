@@ -10,6 +10,8 @@ import { App } from './components/App';
 import Error from './components/ErrorPage';
 import { GapiProvider } from './hooks/useGapi';
 import { API_KEY, DISCOVERY_DOC } from './data';
+import { Provider } from 'react-redux';
+import store from './store';
 
 const gapiClientInitOptions = {
     apiKey: API_KEY,
@@ -23,7 +25,9 @@ if (appNode !== null) {
         <StrictMode>
             <ErrorBoundary FallbackComponent={Error}>
                 <GapiProvider clientInitOptions={gapiClientInitOptions}>
-                    <App />
+                    <Provider store={store}>
+                        <App />
+                    </Provider>
                 </GapiProvider>
             </ErrorBoundary>
         </StrictMode>,

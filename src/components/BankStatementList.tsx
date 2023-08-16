@@ -21,25 +21,20 @@ import MuiListItem from '@mui/material/ListItem';
 import MuiListItemText from '@mui/material/ListItemText';
 import MuiListSubheader from '@mui/material/ListSubheader';
 
-import {
-    Payment,
-    CSV_FIELD_TO_PAYMENT_CSV_FIELD,
-    PaymentFieldsFromCsv,
-    sortPaymentsByDate,
-} from '../models/BankStatementLine';
+import { Payment, CSV_FIELD_TO_PAYMENT_CSV_FIELD, PaymentFieldsFromCsv } from '../models/BankStatementLine';
 import useWindowInnerWidth from '../hooks/useWindowInnerWidth';
 import { loadPaymentsFromFile } from '../services/bsl_csv';
+import { useAppDispatch, useAppSelector } from '../hooks/store';
+import { appendPayments } from '../slices/payments';
 
 const SIDE_SHEET_WIDTH = 256;
 
-interface BankStatementListProps {
-    payments: Payment[];
-    setPayments: any;
-}
-
-export const BankStatementList = ({ payments, setPayments }: BankStatementListProps) => {
+export const BankStatementList = () => {
     const theme = useTheme();
     const screenWidth = useWindowInnerWidth();
+
+    const payments = useAppSelector((state) => state.payments.list);
+    const dispatch = useAppDispatch();
 
     const [shownColumns, setShownColumns] = useState<Array<PaymentFieldsFromCsv>>(['dateStr', 'note', 'amountStr']);
     const [showColumnsSideSheet, setShowColumnsSideSheet] = useState(false);
@@ -52,12 +47,7 @@ export const BankStatementList = ({ payments, setPayments }: BankStatementListPr
         const files = ev.target.files;
         if (files !== null && files.length > 0) {
             const newPayments = await loadPaymentsFromFile(files[0]);
-
-            const mapDocNoOnPayment = new Map<Payment['docNo'], Payment>();
-            for (const payment of [...payments, ...newPayments]) {
-                mapDocNoOnPayment.set(payment.docNo, payment);
-            }
-            setPayments(sortPaymentsByDate(Array.from(mapDocNoOnPayment.values()), { reverse: true }));
+            dispatch(appendPayments(newPayments));
         }
     };
 
