@@ -28,18 +28,22 @@ import {
     sortPaymentsByDate,
 } from '../models/BankStatementLine';
 import useWindowInnerWidth from '../hooks/useWindowInnerWidth';
-import { loadPayments } from '../services/bsl_csv';
+import { loadPaymentsFromFile } from '../services/bsl_csv';
 
 const SIDE_SHEET_WIDTH = 256;
 
-export const BankStatementList = () => {
+interface BankStatementListProps {
+    payments: Payment[];
+    setPayments: any;
+}
+
+export const BankStatementList = ({ payments, setPayments }: BankStatementListProps) => {
     const theme = useTheme();
     const screenWidth = useWindowInnerWidth();
 
     const [shownColumns, setShownColumns] = useState<Array<PaymentFieldsFromCsv>>(['dateStr', 'note', 'amountStr']);
     const [showColumnsSideSheet, setShowColumnsSideSheet] = useState(false);
 
-    const [payments, setPayments] = useState<Payment[]>([]);
     const inputEl = useRef<HTMLInputElement>(null);
 
     const handleImportButtonClick = () => inputEl.current?.click();
@@ -47,7 +51,7 @@ export const BankStatementList = () => {
     const handleFileInputChange: ChangeEventHandler<HTMLInputElement> = async (ev) => {
         const files = ev.target.files;
         if (files !== null && files.length > 0) {
-            const newPayments = await loadPayments(files[0]);
+            const newPayments = await loadPaymentsFromFile(files[0]);
 
             const mapDocNoOnPayment = new Map<Payment['docNo'], Payment>();
             for (const payment of [...payments, ...newPayments]) {

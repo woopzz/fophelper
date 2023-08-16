@@ -1,5 +1,5 @@
 /// <reference types="gapi" />
-
+/// <reference types="gapi.client.drive-v3" />
 /// <reference types="google.accounts" />
 
 import { StrictMode } from 'react';

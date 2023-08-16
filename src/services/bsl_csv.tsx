@@ -6,7 +6,7 @@ const csvOptions: csv.TOptions = {
     delimiter: '\'', // prettier-ignore
 };
 
-export async function loadPayments(file: File): Promise<Payment[]> {
+export async function loadPaymentsFromFile(file: File): Promise<Payment[]> {
     const isWin1251 = await isWindows1251(file);
 
     let csvString: string;
@@ -16,7 +16,11 @@ export async function loadPayments(file: File): Promise<Payment[]> {
         csvString = await file.text();
     }
 
-    const res = csv.toArrays(csvString, csvOptions) as string[][];
+    return loadPaymentsFromString(csvString);
+}
+
+export function loadPaymentsFromString(data: string): Payment[] {
+    const res = csv.toArrays(data, csvOptions) as string[][];
     if (res.length < 2 || res[0][0] !== 'ЄДРПОУ') {
         return [];
     }
