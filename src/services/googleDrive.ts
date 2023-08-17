@@ -1,21 +1,15 @@
 import { GD_FILE_ID, GD_FOLDER_MIMETYPE, GD_ROOT_FOLDER_NAME, GD_PAYMENT_CSV_NAME } from '../data';
 
-export function fetchBSLsCSV({ rootFolderId }: { rootFolderId: GD_FILE_ID }): Promise<GD_FILE_ID> {
+export function fetchBSLsCSV({ rootFolderId }: { rootFolderId: GD_FILE_ID }): Promise<GD_FILE_ID | null> {
     return new Promise((resolve, reject) => {
         const options = {
-            q: `name = '${GD_PAYMENT_CSV_NAME}' and '${rootFolderId}' in parents`,
+            q: `name = '${GD_PAYMENT_CSV_NAME}' and '${rootFolderId}' in parents and trashed = false`,
         };
         gapi.client.drive.files.list(options).then(
             (response) => {
                 const files = response.result.files;
                 console.debug('Found folders:', files);
-
-                const fileId = files !== undefined && files.length > 0 && files[0].id;
-                if (fileId) {
-                    resolve(fileId);
-                } else {
-                    reject();
-                }
+                resolve((files !== undefined && files.length > 0 && files[0].id) || null);
             },
             (error) => {
                 console.error(error);
@@ -41,6 +35,58 @@ export function downloadFile({ fileId }: { fileId: GD_FILE_ID }): Promise<string
             },
         );
     });
+}
+
+export async function createFileMetadata({ parentId }: { parentId: GD_FILE_ID }): Promise<GD_FILE_ID> {
+    return new Promise((resolve, reject) => {
+        gapi.client.drive.files
+            .create(
+                {
+                    fields: 'id',
+                },
+                {
+                    name: GD_PAYMENT_CSV_NAME,
+                    parents: [parentId],
+                },
+            )
+            .then(
+                (response) => {
+                    console.log('response:', response);
+                    const fileId = response.result.id;
+                    if (fileId) {
+                        resolve(fileId);
+                    } else {
+                        reject();
+                    }
+                },
+                (error) => {
+                    console.error(error);
+                    reject('Не вдається створити файл на Google Drive. Спробуйте пізніше.');
+                },
+            );
+    });
+}
+
+export async function uploadFileContent({ fileId, body }: { fileId: GD_FILE_ID; body: string }) {
+    const file = new Blob([body], { type: 'text/csv' });
+    const metadata = {
+        name: GD_PAYMENT_CSV_NAME,
+        mimeType: 'text/csv',
+    };
+
+    const accessToken = gapi.auth.getToken().access_token;
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    form.append('file', file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('PATCH', `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart&fields=id`);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+    xhr.responseType = 'json';
+    xhr.onload = () => {
+        console.log('success', xhr.response);
+    };
+    xhr.send(form);
 }
 
 export async function getOrCreateRootFolder(): Promise<GD_FILE_ID> {

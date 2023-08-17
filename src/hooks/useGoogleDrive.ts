@@ -1,8 +1,14 @@
 import { useCallback, useReducer } from 'react';
-import { downloadFile, fetchBSLsCSV, getOrCreateRootFolder } from '../services/googleDrive';
-import { loadPaymentsFromString } from '../services/bsl_csv';
+import {
+    createFileMetadata,
+    downloadFile,
+    fetchBSLsCSV,
+    getOrCreateRootFolder,
+    uploadFileContent,
+} from '../services/googleDrive';
+import { dumpPayments, loadPaymentsFromString } from '../services/bsl_csv';
 import { appendPayments } from '../slices/payments';
-import { useAppDispatch } from './store';
+import { useAppDispatch, useAppSelector } from './store';
 
 type State = { status: 'pending' } | { status: 'synced' } | { status: 'error'; message: string };
 type Action = { type: 'runSync' } | { type: 'success' } | { type: 'failure'; message: string };
@@ -26,27 +32,41 @@ const stateReducer = (state: State, action: Action): State => {
 
 function useGoogleDrive() {
     const [state, stateDispatch] = useReducer(stateReducer, initState);
+    const allPayments = useAppSelector((state) => state.payments.list);
     const dispatch = useAppDispatch();
 
     const sync = useCallback(async () => {
         if (state.status === 'pending') {
             return;
         }
+        const paymentsToUpload = [...allPayments];
+
         console.debug('run sync');
         try {
             const rootFolderId = await getOrCreateRootFolder();
-            console.log('rootFolderId =', rootFolderId);
-            const bslFileId = await fetchBSLsCSV({ rootFolderId });
-            const rawCSV = await downloadFile({ fileId: bslFileId });
-            console.log(rawCSV);
 
-            const payments = loadPaymentsFromString(rawCSV);
-            dispatch(appendPayments(payments));
+            let bslFileId = await fetchBSLsCSV({ rootFolderId });
+            if (bslFileId !== null) {
+                const rawCSV = await downloadFile({ fileId: bslFileId });
+
+                const newPayments = loadPaymentsFromString(rawCSV);
+                dispatch(appendPayments(newPayments));
+                paymentsToUpload.push(...newPayments);
+            } else {
+                bslFileId = await createFileMetadata({ parentId: rootFolderId });
+            }
+
+            if (allPayments.length > 0) {
+                await uploadFileContent({
+                    fileId: bslFileId,
+                    body: dumpPayments(paymentsToUpload),
+                });
+            }
         } catch (error) {
             console.debug('sync error: ', error);
             stateDispatch({ type: 'failure', message: 'Помилка синхронізації' });
         }
-    }, [state]);
+    }, [state, allPayments, dispatch]);
 
     return { state, sync };
 }

@@ -1,5 +1,5 @@
 import * as csv from 'jquery-csv';
-import { Payment, createPayment } from '../models/BankStatementLine';
+import { CSV_FIELD_TO_PAYMENT_CSV_FIELD, Payment, createPayment } from '../models/BankStatementLine';
 
 const csvOptions: csv.TOptions = {
     separator: ';',
@@ -26,6 +26,21 @@ export function loadPaymentsFromString(data: string): Payment[] {
     }
 
     return res.slice(1).map((x) => createPayment(x));
+}
+
+export function dumpPayments(payments: Payment[]): string {
+    const csvArrays = [];
+    csvArrays.push(Object.keys(CSV_FIELD_TO_PAYMENT_CSV_FIELD));
+
+    for (const payment of payments) {
+        const line = [];
+        for (const key of Object.values(CSV_FIELD_TO_PAYMENT_CSV_FIELD)) {
+            line.push(payment[key]);
+        }
+        csvArrays.push(line);
+    }
+
+    return csv.fromArrays(csvArrays, csvOptions);
 }
 
 /**
