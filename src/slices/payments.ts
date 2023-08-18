@@ -2,11 +2,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sortPaymentsByDate, type Payment } from '../models/BankStatementLine';
 
 interface State {
-    list: Payment[];
+    allPayments: Payment[];
 }
 
 const initialState: State = {
-    list: [],
+    allPayments: [],
 };
 
 export const paymentsSlice = createSlice({
@@ -17,11 +17,11 @@ export const paymentsSlice = createSlice({
             const newPayments = action.payload;
 
             const mapDocNoOnPayment = new Map<Payment['docNo'], Payment>();
-            for (const payment of [...state.list, ...newPayments]) {
+            for (const payment of [...state.allPayments, ...newPayments]) {
                 mapDocNoOnPayment.set(payment.docNo, payment);
             }
 
-            state.list = sortPaymentsByDate(Array.from(mapDocNoOnPayment.values()), { reverse: true });
+            state.allPayments = sortPaymentsByDate(Array.from(mapDocNoOnPayment.values()), { reverse: true });
         },
     },
 });

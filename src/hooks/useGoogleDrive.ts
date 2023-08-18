@@ -32,7 +32,7 @@ const stateReducer = (state: State, action: Action): State => {
 
 function useGoogleDrive() {
     const [state, stateDispatch] = useReducer(stateReducer, initState);
-    const allPayments = useAppSelector((state) => state.payments.list);
+    const allPayments = useAppSelector((state) => state.payments.allPayments);
     const dispatch = useAppDispatch();
 
     const sync = useCallback(async () => {

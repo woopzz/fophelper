@@ -33,7 +33,7 @@ export const BankStatementList = () => {
     const theme = useTheme();
     const screenWidth = useWindowInnerWidth();
 
-    const payments = useAppSelector((state) => state.payments.list);
+    const payments = useAppSelector((state) => state.payments.allPayments);
     const dispatch = useAppDispatch();
 
     const [shownColumns, setShownColumns] = useState<Array<PaymentFieldsFromCsv>>(['dateStr', 'note', 'amountStr']);
