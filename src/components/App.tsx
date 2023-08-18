@@ -9,9 +9,10 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import { BankStatementList } from './BankStatementList';
-import useGoogleDrive from '../hooks/useGoogleDrive';
-import useGapi from '../hooks/useGapi';
 import { CLIENT_ID, SCOPE_DRIVE_FILE } from '../data';
+import { useAppDispatch, useAppSelector } from '../hooks/store';
+import useGapi from '../hooks/useGapi';
+import syncGD from '../thunks/syncGD';
 
 const tokenClientConfig = {
     client_id: CLIENT_ID,
@@ -19,8 +20,9 @@ const tokenClientConfig = {
 };
 
 export const App = () => {
-    const { sync } = useGoogleDrive();
-    const tokenClientCallback = useCallback(() => sync(), [sync]);
+    const dispatch = useAppDispatch();
+    const syncStatus = useAppSelector((state) => state.gapi.syncStatus);
+    const tokenClientCallback = useCallback(() => dispatch(syncGD()), [dispatch]);
     const tokenClient = useGapi({ tokenClientConfig, callback: tokenClientCallback });
 
     const onSync = () => tokenClient?.requestAccessToken();
@@ -30,7 +32,7 @@ export const App = () => {
             <CssBaseline />
             <Container maxWidth="lg">
                 <Button variant="text" onClick={onSync}>
-                    Sync
+                    Sync ({syncStatus})
                 </Button>
                 <BankStatementList />
             </Container>

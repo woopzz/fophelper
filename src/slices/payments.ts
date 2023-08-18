@@ -22,13 +22,8 @@ export const paymentsSlice = createSlice({
     reducers: {
         appendPayments: (state, action: PayloadAction<Payment[]>) => {
             const newPayments = action.payload;
-
-            const mapDocNoOnPayment = new Map<Payment['docNo'], Payment>();
-            for (const payment of [...state.allPayments, ...newPayments]) {
-                mapDocNoOnPayment.set(payment.docNo, payment);
-            }
-
-            state.allPayments = sortPaymentsByDate(Array.from(mapDocNoOnPayment.values()), { reverse: true });
+            const payments = [...state.allPayments, ...newPayments];
+            state.allPayments = sortPaymentsByDate(omitDuplicates(payments), { reverse: true });
             state.lastFiscalPeriodInfo.total = calcLastFiscalPeriodTotal(state);
         },
     },
@@ -49,6 +44,14 @@ function calcInitLastFiscalPeriodInfo(): State['lastFiscalPeriodInfo'] {
     }
 
     return { quarter, year, total: 0 };
+}
+
+function omitDuplicates(payments: Payment[]): Payment[] {
+    const mapDocNoOnPayment = new Map<Payment['docNo'], Payment>();
+    for (const payment of payments) {
+        mapDocNoOnPayment.set(payment.docNo, payment);
+    }
+    return Array.from(mapDocNoOnPayment.values());
 }
 
 function calcLastFiscalPeriodTotal(state: State): State['lastFiscalPeriodInfo']['total'] {
