@@ -1,3 +1,5 @@
+import { calcQuarter } from '../utils';
+
 type Quarter = 1 | 2 | 3 | 4;
 
 export const CSV_FIELD_TO_PAYMENT_CSV_FIELD = {
@@ -24,6 +26,7 @@ export type PaymentFieldsFromCsv = (typeof CSV_FIELD_TO_PAYMENT_CSV_FIELD)[CsvFi
 type CsvPayment = Record<PaymentFieldsFromCsv, string>;
 
 export type Payment = CsvPayment & {
+    time: number;
     year: number;
     quarter: Quarter;
     amount: number;
@@ -46,31 +49,11 @@ export function createPayment(values: string[]): Payment {
 
     // We need a Date object to order records by date.
     const date = calcPaymentDate(self);
+    self.time = date.getTime();
     self.year = date.getFullYear();
 
     // We order records by quarter.
-    switch (date.getMonth()) {
-        case 0:
-        case 1:
-        case 2:
-            self.quarter = 1;
-            break;
-        case 3:
-        case 4:
-        case 5:
-            self.quarter = 2;
-            break;
-        case 6:
-        case 7:
-        case 8:
-            self.quarter = 3;
-            break;
-        case 9:
-        case 10:
-        case 11:
-            self.quarter = 4;
-            break;
-    }
+    self.quarter = calcQuarter(date);
 
     // We add amounts, so we need the Number type to do it properly.
     self.amount = parseFloat(self.amountStr.replace(/ /g, ''));

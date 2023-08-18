@@ -33,7 +33,7 @@ export const BankStatementList = () => {
     const theme = useTheme();
     const screenWidth = useWindowInnerWidth();
 
-    const payments = useAppSelector((state) => state.payments.allPayments);
+    const { allPayments, lastFiscalPeriodInfo } = useAppSelector((state) => state.payments);
     const dispatch = useAppDispatch();
 
     const [shownColumns, setShownColumns] = useState<Array<PaymentFieldsFromCsv>>(['dateStr', 'note', 'amountStr']);
@@ -73,6 +73,9 @@ export const BankStatementList = () => {
 
     return (
         <Paper>
+            <div>
+                {lastFiscalPeriodInfo.year} / {lastFiscalPeriodInfo.quarter}: {lastFiscalPeriodInfo.total.toFixed(2)}
+            </div>
             <MuiToolbar variant="dense">
                 <Input type="file" onChange={handleFileInputChange} inputRef={inputEl} sx={{ display: 'none' }} />
                 <MuiIconButton onClick={handleImportButtonClick} sx={{ marginLeft: 'auto' }}>
@@ -94,7 +97,7 @@ export const BankStatementList = () => {
                         <TableRow>{headRowCells}</TableRow>
                     </TableHead>
                     <TableBody>
-                        {payments.map((payment) => (
+                        {allPayments.map((payment) => (
                             <ListItem key={payment.docNo} payment={payment} shownColumns={shownColumns} />
                         ))}
                     </TableBody>
