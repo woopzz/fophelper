@@ -9,5 +9,3 @@ export const GD_ROOT_FOLDER_NAME = 'woopzz/fophelper';
 export const GD_PAYMENT_CSV_NAME = 'payments.csv';
 
 export const GD_ERROR_BAD_STATUS = 'Bad response status';
-
-export type GD_FILE_ID = Required<gapi.client.drive.File>['id'];

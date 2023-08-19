@@ -4,7 +4,7 @@ import { createGD, downloadGD, searchGD, uploadGD } from '../services/googleDriv
 import { appendPayments } from '../slices/payments';
 import { RootState } from '../store';
 import { changeSyncStatus } from '../slices/gapi';
-import { GD_FILE_ID, GD_FOLDER_MIMETYPE, GD_PAYMENT_CSV_NAME, GD_ROOT_FOLDER_NAME } from '../data';
+import { GD_FOLDER_MIMETYPE, GD_PAYMENT_CSV_NAME, GD_ROOT_FOLDER_NAME } from '../data';
 import CustomError from '../models/CustomError';
 
 export default function syncGD(): ThunkAction<void, RootState, unknown, Action> {

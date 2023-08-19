@@ -1,4 +1,4 @@
-import { GD_FILE_ID, GD_PAYMENT_CSV_NAME, GD_ERROR_BAD_STATUS } from '../data';
+import { GD_PAYMENT_CSV_NAME, GD_ERROR_BAD_STATUS } from '../data';
 import CustomError from '../models/CustomError';
 
 export async function searchGD({ q, fields }: { q: string; fields: string }): Promise<gapi.client.drive.File[]> {
