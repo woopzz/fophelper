@@ -1,156 +1,86 @@
-import { GD_FILE_ID, GD_FOLDER_MIMETYPE, GD_ROOT_FOLDER_NAME, GD_PAYMENT_CSV_NAME } from '../data';
+import { GD_FILE_ID, GD_PAYMENT_CSV_NAME, GD_ERROR_BAD_STATUS } from '../data';
+import CustomError from '../models/CustomError';
 
-export function fetchBSLsCSV({ rootFolderId }: { rootFolderId: GD_FILE_ID }): Promise<GD_FILE_ID | null> {
-    return new Promise((resolve, reject) => {
-        const options = {
-            q: `name = '${GD_PAYMENT_CSV_NAME}' and '${rootFolderId}' in parents and trashed = false`,
-        };
-        gapi.client.drive.files.list(options).then(
-            (response) => {
-                const files = response.result.files;
-                console.debug('Found folders:', files);
-                resolve((files !== undefined && files.length > 0 && files[0].id) || null);
-            },
-            (error) => {
-                console.error(error);
-                reject('Не вдається отримати інформацію про файл CSV з платежами з Google Drive. Спробуйте пізніше.');
-            },
-        );
-    });
-}
-
-export function downloadFile({ fileId }: { fileId: GD_FILE_ID }): Promise<string> {
-    return new Promise((resolve, reject) => {
-        gapi.client.drive.files.get({ fileId, alt: 'media' }).then(
-            (response) => {
-                if ((response.status || 400) === 200) {
-                    resolve(response.body);
-                } else {
-                    reject();
-                }
-            },
-            (error) => {
-                console.error(error);
-                reject('Не вдається завантажити файл з Google Drive. Спробуйте пізніше.');
-            },
-        );
-    });
-}
-
-export async function createFileMetadata({ parentId }: { parentId: GD_FILE_ID }): Promise<GD_FILE_ID> {
-    return new Promise((resolve, reject) => {
-        gapi.client.drive.files
-            .create(
-                {
-                    fields: 'id',
-                },
-                {
-                    name: GD_PAYMENT_CSV_NAME,
-                    parents: [parentId],
-                },
-            )
-            .then(
-                (response) => {
-                    console.log('response:', response);
-                    const fileId = response.result.id;
-                    if (fileId) {
-                        resolve(fileId);
-                    } else {
-                        reject();
-                    }
-                },
-                (error) => {
-                    console.error(error);
-                    reject('Не вдається створити файл на Google Drive. Спробуйте пізніше.');
-                },
-            );
-    });
-}
-
-export async function uploadFileContent({ fileId, body }: { fileId: GD_FILE_ID; body: string }) {
-    const file = new Blob([body], { type: 'text/csv' });
-    const metadata = {
-        name: GD_PAYMENT_CSV_NAME,
-        mimeType: 'text/csv',
-    };
-
-    const accessToken = gapi.auth.getToken().access_token;
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-    form.append('file', file);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('PATCH', `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart&fields=id`);
-    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-    xhr.responseType = 'json';
-    xhr.onload = () => {
-        console.log('success', xhr.response);
-    };
-    xhr.send(form);
-}
-
-export async function getOrCreateRootFolder(): Promise<GD_FILE_ID> {
+export async function searchGD({ q, fields }: { q: string; fields: string }): Promise<gapi.client.drive.File[]> {
     try {
-        return await getRootFolder();
-    } catch {
-        return await createRootFolder();
+        const spaces = 'drive';
+        const response = await gapi.client.drive.files.list({ q, fields, spaces });
+        console.debug(response);
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText || GD_ERROR_BAD_STATUS);
+        }
+
+        return response.result.files || [];
+    } catch (error) {
+        console.error(error);
+        throw new CustomError('Помилка пошуку на Google Drive.');
     }
 }
 
-function getRootFolder(): Promise<GD_FILE_ID> {
-    return new Promise((resolve, reject) => {
-        const options = {
-            q: 'mimeType = "application/vnd.google-apps.folder" and name = "woopzz/fophelper" and trashed = false and "root" in parents',
-            fields: 'files(id)',
-            spaces: 'drive',
-        };
-        gapi.client.drive.files.list(options).then(
-            (response) => {
-                const files = response.result.files;
-                console.debug('Found folders:', files);
+export async function createGD({ resource, fields }: { resource: gapi.client.drive.File; fields: string }) {
+    try {
+        const response = await gapi.client.drive.files.create({ resource, fields });
+        console.debug(response);
 
-                const fileId = files !== undefined && files.length > 0 && files[0].id;
-                if (fileId) {
-                    resolve(fileId);
-                } else {
-                    reject();
-                }
-            },
-            (error) => {
-                console.error(error);
-                reject('Не вдається отримати статус основної директорії на Google Drive. Спробуйте пізніше.');
-            },
-        );
-    });
+        if (response.status !== 200) {
+            throw new Error(response.statusText || GD_ERROR_BAD_STATUS);
+        }
+
+        return response.result;
+    } catch (error) {
+        console.error(error);
+        throw new CustomError('Не вдається створити новий файл на Google Drive.');
+    }
 }
 
-function createRootFolder(): Promise<GD_FILE_ID> {
-    return new Promise((resolve, reject) => {
-        const resource = {
-            name: GD_ROOT_FOLDER_NAME,
-            mimeType: GD_FOLDER_MIMETYPE,
-        };
-        const options = {
-            resource,
-            fields: 'id',
-        };
-        gapi.client.drive.files.create(options).then(
-            (response) => {
-                const file = response.result;
-                console.debug('New file:', file);
+export async function downloadGD({ fileId }: { fileId: GD_FILE_ID }): Promise<string> {
+    try {
+        const response = await gapi.client.drive.files.get({ fileId, alt: 'media' });
+        console.debug(response);
 
-                if (file.id !== undefined) {
-                    resolve(file.id);
-                } else {
-                    reject(
-                        'Директорія на Google Drive була створена, але інформація про неї невідома. Будь ласка, повідомте про це адміністратора.',
-                    );
-                }
-            },
-            (error) => {
-                console.error(error);
-                reject('Не вдається створити директорію на Google Drive. Спробуйте пізніше.');
+        if (response.status !== 200) {
+            throw new Error(response.statusText || GD_ERROR_BAD_STATUS);
+        }
+
+        return response.body;
+    } catch (error) {
+        console.error(error);
+        throw new CustomError('Не вдається завантажити файл з Google Drive.');
+    }
+}
+
+export async function uploadGD({ fileId, body }: { fileId: GD_FILE_ID; body: string }) {
+    try {
+        const metadata = {
+            name: GD_PAYMENT_CSV_NAME,
+            mimeType: 'text/csv',
+        };
+
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+        form.append('file', new Blob([body], { type: 'text/csv' }));
+
+        const accessToken = gapi.auth.getToken().access_token;
+
+        const response = await fetch(
+            `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart&fields=id`,
+            {
+                method: 'PATCH',
+                mode: 'cors',
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                },
+                body: form,
             },
         );
-    });
+        console.debug(response);
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText || GD_ERROR_BAD_STATUS);
+        }
+    } catch (error) {
+        console.error(error);
+        throw new CustomError('Не вдається завантажити файл на Google Drive.');
+    }
 }
