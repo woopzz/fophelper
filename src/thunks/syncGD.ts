@@ -4,6 +4,7 @@ import { createGD, downloadGD, searchGD, uploadGD } from '../services/googleDriv
 import { appendPayments } from '../slices/payments';
 import { RootState } from '../store';
 import { changeSyncStatus } from '../slices/gapi';
+import { notify } from '../slices/notification';
 import { GD_FOLDER_MIMETYPE, GD_PAYMENT_CSV_NAME, GD_ROOT_FOLDER_NAME } from '../data';
 import CustomError from '../models/CustomError';
 
@@ -38,8 +39,13 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
             }
             dispatch(changeSyncStatus('succeeded'));
         } catch (error) {
-            console.debug('sync error: ', error);
             dispatch(changeSyncStatus('failed'));
+
+            let message = 'Помилка синхронізації.';
+            if (error instanceof CustomError && error.message) {
+                message = error.message;
+            }
+            dispatch(notify(message));
         }
     };
 }

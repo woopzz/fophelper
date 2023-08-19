@@ -9,3 +9,5 @@ export const GD_ROOT_FOLDER_NAME = 'woopzz/fophelper';
 export const GD_PAYMENT_CSV_NAME = 'payments.csv';
 
 export const GD_ERROR_BAD_STATUS = 'Bad response status';
+
+export const NOTIFICATION_DELAY_MS = 3000;

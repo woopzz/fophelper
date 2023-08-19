@@ -9,6 +9,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import { BankStatementList } from './BankStatementList';
+import { Notification } from './Notification';
 import { CLIENT_ID, SCOPE_DRIVE_FILE } from '../data';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import useGapi from '../hooks/useGapi';
@@ -36,6 +37,7 @@ export const App = () => {
                 </Button>
                 <BankStatementList />
             </Container>
+            <Notification />
         </>
     );
 };
