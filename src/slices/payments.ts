@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { sortPaymentsByDate, type Payment } from '../models/BankStatementLine';
-import { calcQuarter } from '../utils';
+import { calcQuarter, omitDuplicates } from '../utils';
 
 interface State {
     allPayments: Payment[];
@@ -23,7 +23,7 @@ export const paymentsSlice = createSlice({
         appendPayments: (state, action: PayloadAction<Payment[]>) => {
             const newPayments = action.payload;
             const payments = [...state.allPayments, ...newPayments];
-            state.allPayments = sortPaymentsByDate(omitDuplicates(payments), { reverse: true });
+            state.allPayments = sortPaymentsByDate(omitDuplicates(payments, 'docNo'), { reverse: true });
             state.lastFiscalPeriodInfo.total = calcLastFiscalPeriodTotal(state);
         },
     },
@@ -44,14 +44,6 @@ function calcInitLastFiscalPeriodInfo(): State['lastFiscalPeriodInfo'] {
     }
 
     return { quarter, year, total: 0 };
-}
-
-function omitDuplicates(payments: Payment[]): Payment[] {
-    const mapDocNoOnPayment = new Map<Payment['docNo'], Payment>();
-    for (const payment of payments) {
-        mapDocNoOnPayment.set(payment.docNo, payment);
-    }
-    return Array.from(mapDocNoOnPayment.values());
 }
 
 function calcLastFiscalPeriodTotal(state: State): State['lastFiscalPeriodInfo']['total'] {
