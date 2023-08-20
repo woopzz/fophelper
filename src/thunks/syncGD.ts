@@ -89,8 +89,9 @@ async function getOrCreateFolder({ name, parentId }: { name: string; parentId: G
 
     const createResult = await createGD({
         resource: {
-            name: GD_ROOT_FOLDER_NAME,
+            name,
             mimeType: GD_FOLDER_MIMETYPE,
+            parents: [parentId],
         },
         fields: 'id',
     });
