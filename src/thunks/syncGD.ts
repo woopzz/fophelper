@@ -5,8 +5,16 @@ import { appendPayments } from '../slices/payments';
 import { RootState } from '../store';
 import { changeSyncStatus } from '../slices/gapi';
 import { notify } from '../slices/notification';
-import { GD_FOLDER_MIMETYPE, GD_PAYMENT_CSV_NAME, GD_ROOT_FOLDER_NAME } from '../data';
+import {
+    GD_ACTS_FOLDER_NAME,
+    GD_FOLDER_MIMETYPE,
+    GD_PAYMENT_CSV_NAME,
+    GD_PDF_MIMETYPE,
+    GD_ROOT_FOLDER_NAME,
+} from '../data';
 import CustomError from '../models/CustomError';
+import { Act } from '../models/Act';
+import { appendActs } from '../slices/acts';
 
 export default function syncGD(): ThunkAction<void, RootState, unknown, Action> {
     return async function (dispatch, getState) {
@@ -20,7 +28,10 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
 
         console.debug('run sync');
         try {
-            const rootFolderId = await getOrCreateRootFolder();
+            const rootFolderId = await getOrCreateFolder({
+                name: GD_ROOT_FOLDER_NAME,
+                parentId: 'root',
+            });
 
             let bslFileId = await getPaymentsCSV({ rootFolderId });
             if (bslFileId !== null) {
@@ -29,6 +40,16 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
                 state = getState();
             } else {
                 bslFileId = await createPaymentCsvMetadata({ parentId: rootFolderId });
+            }
+
+            const actsFolderId = await getOrCreateFolder({
+                name: GD_ACTS_FOLDER_NAME,
+                parentId: rootFolderId,
+            });
+
+            const newActs = await getActs({ parentId: actsFolderId });
+            if (newActs.length > 0) {
+                dispatch(appendActs(newActs));
             }
 
             if (hasPaymentsBeforeSync) {
@@ -50,9 +71,9 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
     };
 }
 
-export async function getOrCreateRootFolder(): Promise<GD_FILE_ID> {
+async function getOrCreateFolder({ name, parentId }: { name: string; parentId: GD_FILE_ID }): Promise<GD_FILE_ID> {
     const searchResult = await searchGD({
-        q: `mimeType = "${GD_FOLDER_MIMETYPE}" and name = "${GD_ROOT_FOLDER_NAME}" and trashed = false and "root" in parents`,
+        q: `mimeType = "${GD_FOLDER_MIMETYPE}" and name = "${name}" and trashed = false and "${parentId}" in parents`,
         fields: 'files(id)',
     });
     const found = searchResult.length > 0;
@@ -63,7 +84,7 @@ export async function getOrCreateRootFolder(): Promise<GD_FILE_ID> {
     }
 
     if (found) {
-        throw new CustomError('Основну директорію знайдено, але інформація про неї невідома.');
+        throw new CustomError(`Директорію "${name}" знайдено, але інформація про неї невідома.`);
     }
 
     const createResult = await createGD({
@@ -78,10 +99,10 @@ export async function getOrCreateRootFolder(): Promise<GD_FILE_ID> {
         return createResult.id;
     }
 
-    throw new CustomError('Основну директорію створено, але інформація про неї невідома.');
+    throw new CustomError(`Директорію "${name}" створено, але інформація про неї невідома.`);
 }
 
-export async function getPaymentsCSV({ rootFolderId }: { rootFolderId: GD_FILE_ID }): Promise<GD_FILE_ID | null> {
+async function getPaymentsCSV({ rootFolderId }: { rootFolderId: GD_FILE_ID }): Promise<GD_FILE_ID | null> {
     const searchResult = await searchGD({
         q: `name = '${GD_PAYMENT_CSV_NAME}' and '${rootFolderId}' in parents and trashed = false`,
         fields: 'files(id)',
@@ -100,7 +121,7 @@ export async function getPaymentsCSV({ rootFolderId }: { rootFolderId: GD_FILE_I
     throw new CustomError('Помилка отримання інформації про CSV файл з платежами.');
 }
 
-export async function createPaymentCsvMetadata({ parentId }: { parentId: GD_FILE_ID }): Promise<GD_FILE_ID> {
+async function createPaymentCsvMetadata({ parentId }: { parentId: GD_FILE_ID }): Promise<GD_FILE_ID> {
     const createResult = await createGD({
         resource: {
             name: GD_PAYMENT_CSV_NAME,
@@ -114,4 +135,22 @@ export async function createPaymentCsvMetadata({ parentId }: { parentId: GD_FILE
     }
 
     throw new CustomError('Новий CSV файл для платежів створено, але інформація про нього невідома.');
+}
+
+async function getActs({ parentId }: { parentId: GD_FILE_ID }): Promise<Act[]> {
+    const searchResult = await searchGD({
+        q: `mimeType = "${GD_PDF_MIMETYPE}" and "${parentId}" in parents and trashed = false`,
+        fields: 'files(id, name, webViewLink)',
+    });
+
+    const acts: Act[] = [];
+    for (let i = 0; i < searchResult.length; i++) {
+        const { name, id: gdId, webViewLink: gdWebViewLink } = searchResult[i];
+        if (!gdId || !name || !gdWebViewLink) {
+            throw new CustomError('Один з актів не містить всієї потрібної інформації.');
+        }
+        acts.push({ name, gdId, gdWebViewLink });
+    }
+
+    return acts;
 }
