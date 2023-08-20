@@ -14,6 +14,8 @@ import MuiList from '@mui/material/List';
 import MuiListItem from '@mui/material/ListItem';
 import MuiListItemText from '@mui/material/ListItemText';
 import MuiListSubheader from '@mui/material/ListSubheader';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import Link from '@mui/material/Link';
 
 import { Payment, CSV_FIELD_TO_PAYMENT_CSV_FIELD, PaymentFieldsFromCsv } from '../models/BankStatementLine';
 import useWindowInnerWidth from '../hooks/useWindowInnerWidth';
@@ -98,6 +100,7 @@ export const BankStatementList = () => {
                 records={allActs}
                 fieldsInfo={[{ key: 'name', label: 'Назва', getDisplayValue: getActName }]}
                 getRecordKey={getActRecordKey}
+                actions={[{ key: 'link', getReactNode: getActionActWebViewLink }]}
             />
         </Paper>
     );
@@ -146,4 +149,14 @@ function getActRecordKey(act: Act): React.Key {
 
 function getActName(act: Act): string {
     return act.name;
+}
+
+function getActionActWebViewLink(act: Act): React.ReactNode {
+    return (
+        <Link href={act.gdWebViewLink} target="_blank" rel="noopener">
+            <MuiIconButton>
+                <OpenInNewIcon />
+            </MuiIconButton>
+        </Link>
+    );
 }
