@@ -2,12 +2,6 @@ import { useState, useRef, ChangeEventHandler } from 'react';
 
 import useTheme from '@mui/material/styles/useTheme';
 import Input from '@mui/material/Input';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MuiBox from '@mui/material/Box';
 import MuiToolbar from '@mui/material/Toolbar';
@@ -26,6 +20,7 @@ import useWindowInnerWidth from '../hooks/useWindowInnerWidth';
 import { loadPaymentsFromFile } from '../services/bsl_csv';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import { appendPayments } from '../slices/payments';
+import { ListView } from './ListView';
 
 const SIDE_SHEET_WIDTH = 256;
 
@@ -59,10 +54,6 @@ export const BankStatementList = () => {
         }
     };
 
-    const headRowCells = Object.entries(CSV_FIELD_TO_PAYMENT_CSV_FIELD)
-        .filter(([_, paymentField]) => shownColumns.includes(paymentField))
-        .map(([csvField, paymentField]) => <TableCell key={paymentField}>{csvField}</TableCell>);
-
     const shouldDisplayDrawerPermanently = (screenWidth - theme.breakpoints.values.lg) / 2 > SIDE_SHEET_WIDTH;
 
     const buttonshowColumnsSideSheet = !shouldDisplayDrawerPermanently && (
@@ -91,32 +82,17 @@ export const BankStatementList = () => {
             >
                 <ColumnsSideSheet shownColumns={shownColumns} toggle={toggleShownColumns} />
             </MuiDrawer>
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>{headRowCells}</TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {allPayments.map((payment) => (
-                            <ListItem key={payment.docNo} payment={payment} shownColumns={shownColumns} />
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <ListView<Payment>
+                records={allPayments}
+                fieldsInfo={[
+                    { key: 'dateStr', label: 'Дата', getDisplayValue: getPaymentDate },
+                    { key: 'amount', label: 'Сума, грн', getDisplayValue: getPaymentAmount, align: 'right' },
+                    { key: 'note', label: 'Призначення', getDisplayValue: getPaymentNote },
+                ]}
+                getRecordKey={getRecordKey}
+            />
         </Paper>
     );
-};
-
-interface ListItemProps {
-    payment: Payment;
-    shownColumns: Array<PaymentFieldsFromCsv>;
-}
-
-const ListItem = ({ payment, shownColumns }: ListItemProps) => {
-    const cells = Object.values(CSV_FIELD_TO_PAYMENT_CSV_FIELD)
-        .filter((paymentField) => shownColumns.includes(paymentField))
-        .map((paymentField) => <TableCell key={paymentField}>{payment[paymentField]}</TableCell>);
-    return <TableRow>{cells}</TableRow>;
 };
 
 interface ColumnsSideSheetProps {
@@ -139,3 +115,19 @@ const ColumnsSideSheet = ({ shownColumns, toggle }: ColumnsSideSheetProps) => {
         </MuiBox>
     );
 };
+
+function getRecordKey(payment: Payment): React.Key {
+    return payment.docNo;
+}
+
+function getPaymentDate(payment: Payment): string {
+    return payment.dateStr;
+}
+
+function getPaymentAmount(payment: Payment): string {
+    return payment.amountStr;
+}
+
+function getPaymentNote(payment: Payment): string {
+    return payment.note;
+}
