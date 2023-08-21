@@ -12,6 +12,7 @@ import { GapiProvider } from './hooks/useGapi';
 import { API_KEY, DISCOVERY_DOC } from './data';
 import { Provider } from 'react-redux';
 import store from './store';
+import { HashRouter } from 'react-router-dom';
 
 const gapiClientInitOptions = {
     apiKey: API_KEY,
@@ -26,7 +27,9 @@ if (appNode !== null) {
             <ErrorBoundary FallbackComponent={Error}>
                 <GapiProvider clientInitOptions={gapiClientInitOptions}>
                     <Provider store={store}>
-                        <App />
+                        <HashRouter>
+                            <App />
+                        </HashRouter>
                     </Provider>
                 </GapiProvider>
             </ErrorBoundary>

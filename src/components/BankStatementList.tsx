@@ -14,8 +14,6 @@ import MuiList from '@mui/material/List';
 import MuiListItem from '@mui/material/ListItem';
 import MuiListItemText from '@mui/material/ListItemText';
 import MuiListSubheader from '@mui/material/ListSubheader';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import Link from '@mui/material/Link';
 
 import { Payment, CSV_FIELD_TO_PAYMENT_CSV_FIELD, PaymentFieldsFromCsv } from '../models/BankStatementLine';
 import useWindowInnerWidth from '../hooks/useWindowInnerWidth';
@@ -23,7 +21,6 @@ import { loadPaymentsFromFile } from '../services/bsl_csv';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import { appendPayments } from '../slices/payments';
 import { ListView } from './ListView';
-import { Act } from '../models/Act';
 
 const SIDE_SHEET_WIDTH = 256;
 
@@ -32,7 +29,6 @@ export const BankStatementList = () => {
     const screenWidth = useWindowInnerWidth();
 
     const { allPayments, lastFiscalPeriodInfo } = useAppSelector((state) => state.payments);
-    const { allActs } = useAppSelector((state) => state.acts);
     const dispatch = useAppDispatch();
 
     const [shownColumns, setShownColumns] = useState<Array<PaymentFieldsFromCsv>>(['dateStr', 'note', 'amountStr']);
@@ -95,13 +91,6 @@ export const BankStatementList = () => {
                 ]}
                 getRecordKey={getRecordKey}
             />
-            <div style={{ height: '50px', background: '#eee' }}></div>
-            <ListView<Act>
-                records={allActs}
-                fieldsInfo={[{ key: 'name', label: 'Назва', getDisplayValue: getActName }]}
-                getRecordKey={getActRecordKey}
-                actions={[{ key: 'link', getReactNode: getActionActWebViewLink }]}
-            />
         </Paper>
     );
 };
@@ -141,22 +130,4 @@ function getPaymentAmount(payment: Payment): string {
 
 function getPaymentNote(payment: Payment): string {
     return payment.note;
-}
-
-function getActRecordKey(act: Act): React.Key {
-    return act.gdId;
-}
-
-function getActName(act: Act): string {
-    return act.name;
-}
-
-function getActionActWebViewLink(act: Act): React.ReactNode {
-    return (
-        <Link href={act.gdWebViewLink} target="_blank" rel="noopener">
-            <MuiIconButton>
-                <OpenInNewIcon />
-            </MuiIconButton>
-        </Link>
-    );
 }
