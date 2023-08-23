@@ -23,6 +23,7 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
         if (state.gapi.syncStatus === 'pending') {
             return;
         }
+        dispatch(changeSyncStatus('pending'));
 
         const hasPaymentsBeforeSync = state.payments.allPayments.length > 0;
 
