@@ -1,21 +1,26 @@
 import MuiOpenInNewIcon from '@mui/icons-material/OpenInNew';
 import MuiLink from '@mui/material/Link';
 import MuiIconButton from '@mui/material/IconButton';
+import MUIPaper from '@mui/material/Paper';
 
 import { ListView } from '../components/ListView';
 import { Act } from '../models/Act';
 import { useAppSelector } from '../hooks/store';
+import { ActionButtons } from '../components/ActionButtons';
 
 export const ActsPage = () => {
     const { allActs } = useAppSelector((state) => state.acts);
 
     return (
-        <ListView<Act>
-            records={allActs}
-            fieldsInfo={[{ key: 'name', label: 'Назва', getDisplayValue: getActName }]}
-            getRecordKey={getActRecordKey}
-            actions={[{ key: 'link', getReactNode: getActionActWebViewLink }]}
-        />
+        <MUIPaper>
+            <ActionButtons />
+            <ListView<Act>
+                records={allActs}
+                fieldsInfo={[{ key: 'name', label: 'Назва', getDisplayValue: getActName }]}
+                getRecordKey={getActRecordKey}
+                actions={[{ key: 'link', getReactNode: getActionActWebViewLink }]}
+            />
+        </MUIPaper>
     );
 };
 
