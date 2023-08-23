@@ -1,5 +1,7 @@
-import { IconButton, Snackbar } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import MUIAlert from '@mui/material/Alert';
+import MUIIconButton from '@mui/material/IconButton';
+import MUISnackbar from '@mui/material/Snackbar';
+import MUICloseIcon from '@mui/icons-material/Close';
 
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import { dismissNotification } from '../slices/notification';
@@ -15,10 +17,16 @@ export const Notification = () => {
     const handleClose = () => dispatch(dismissNotification());
 
     const action = (
-        <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-            <CloseIcon fontSize="small" />
-        </IconButton>
+        <MUIIconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+            <MUICloseIcon fontSize="small" />
+        </MUIIconButton>
     );
 
-    return <Snackbar open={true} message={notification.message} action={action} />;
+    return (
+        <MUISnackbar open={true}>
+            <MUIAlert action={action} severity={notification.type}>
+                {notification.message}
+            </MUIAlert>
+        </MUISnackbar>
+    );
 };

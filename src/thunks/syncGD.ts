@@ -60,6 +60,7 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
                 });
             }
             dispatch(changeSyncStatus('succeeded'));
+            dispatch(notify({ message: 'Синхронізація успішна', type: 'info' }));
         } catch (error) {
             dispatch(changeSyncStatus('failed'));
 
@@ -67,7 +68,7 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
             if (error instanceof CustomError && error.message) {
                 message = error.message;
             }
-            dispatch(notify(message));
+            dispatch(notify({ message, type: 'error' }));
         }
     };
 }

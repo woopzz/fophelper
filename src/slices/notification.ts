@@ -4,6 +4,7 @@ import { RootState } from '../store';
 
 type Notification = {
     message: string;
+    type: 'info' | 'error';
     timeoutId: ReturnType<typeof setTimeout>;
 };
 
@@ -25,7 +26,9 @@ const notificationSlice = createSlice({
         },
         dismissNotification: (state) => {
             clearNotificationTimeout(state.notification);
-            state.notification = null;
+            if (state.notification !== null) {
+                state.notification = null;
+            }
         },
     },
 });
@@ -35,10 +38,10 @@ export { dismissNotification };
 
 export default notificationSlice.reducer;
 
-export function notify(message: Notification['message']): ThunkAction<void, RootState, unknown, Action> {
+export function notify(notification: Omit<Notification, 'timeoutId'>): ThunkAction<void, RootState, unknown, Action> {
     return async function (dispatch) {
         const timeoutId = setTimeout(() => dispatch(dismissNotification()), NOTIFICATION_DELAY_MS);
-        dispatch(addNotification({ message, timeoutId }));
+        dispatch(addNotification({ ...notification, timeoutId }));
     };
 }
 
