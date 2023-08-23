@@ -1,21 +1,56 @@
-import { Outlet, Link as RouteLink } from 'react-router-dom';
+import { createContext } from 'react';
 
-import MuiCssBaseline from '@mui/material/CssBaseline';
-import MuiContainer from '@mui/material/Container';
+import { Outlet } from 'react-router-dom';
 
-import { Notification } from '../components/Notification';
+import MUICssBaseline from '@mui/material/CssBaseline';
+import MUIContainer from '@mui/material/Container';
+import MUIToolbar from '@mui/material/Toolbar';
+import MUIButton from '@mui/material/Button';
+import MuiTableRowsIcon from '@mui/icons-material/TableRows';
+
+import { Notification } from './Notification';
+import { Sidebar } from './Sidebar';
+import useSidebarVisibility, { SidebarVisibilityProvider } from '../hooks/useSidebarVisibility';
+
+const SIDEBAR_DEFAULT_VISIBILITY = false;
+
+export const SidebarVisibilityContext = createContext({
+    showSidebar: SIDEBAR_DEFAULT_VISIBILITY,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+    setShowSidebar: (_: boolean) => {},
+});
 
 export const Layout = () => {
     return (
         <>
-            <MuiCssBaseline />
-            <MuiContainer maxWidth="lg">
-                <RouteLink to="/payments">Go to payments</RouteLink>
-                <br />
-                <RouteLink to="/acts">Go to acts</RouteLink>
-                <Outlet />
-            </MuiContainer>
+            <MUICssBaseline />
+            <SidebarVisibilityProvider>
+                <Sidebar />
+                <MUIContainer maxWidth="lg">
+                    <MUIToolbar>
+                        <ActionButtons />
+                    </MUIToolbar>
+                    <Outlet />
+                </MUIContainer>
+            </SidebarVisibilityProvider>
             <Notification />
         </>
+    );
+};
+
+const ActionButtons = () => {
+    const { permanent, setShowSidebar } = useSidebarVisibility();
+
+    const handleClickMenu = () => setShowSidebar(true);
+
+    return (
+        <MUIButton
+            variant="contained"
+            startIcon={<MuiTableRowsIcon />}
+            onClick={handleClickMenu}
+            sx={{ display: permanent ? 'none' : 'inherit' }}
+        >
+            Меню
+        </MUIButton>
     );
 };
