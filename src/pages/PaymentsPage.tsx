@@ -7,12 +7,12 @@ import MuiUploadIcon from '@mui/icons-material/Upload';
 
 import { ActionButtons } from '../components/ActionButtons';
 import { ListView } from '../components/ListView';
-import { Payment } from '../models/BankStatementLine';
+import { Payment } from '../models/Payment';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
-import { loadPaymentsFromFile } from '../services/bsl_csv';
+import { loadPaymentsFromFile } from '../services/payment_csv';
 import { appendPayments } from '../slices/payments';
 
-export const BankStatementPage = () => {
+export const PaymentsPage = () => {
     const { allPayments } = useAppSelector((state) => state.payments);
     return (
         <MUIPaper>

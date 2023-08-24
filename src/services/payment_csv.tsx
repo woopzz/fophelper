@@ -1,5 +1,5 @@
 import * as csv from 'jquery-csv';
-import { CSV_FIELD_TO_PAYMENT_CSV_FIELD, Payment, createPayment } from '../models/BankStatementLine';
+import { CSV_FIELD_TO_PAYMENT_CSV_FIELD, Payment, createPayment } from '../models/Payment';
 
 const csvOptions: csv.TOptions = {
     separator: ';',

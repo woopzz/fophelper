@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { sortPaymentsByDate, type Payment } from '../models/BankStatementLine';
+import { sortPaymentsByDate, type Payment } from '../models/Payment';
 import { calcQuarter, omitDuplicates } from '../utils';
 
 interface State {

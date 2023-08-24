@@ -1,5 +1,5 @@
 import { ThunkAction, Action } from '@reduxjs/toolkit';
-import { dumpPayments, loadPaymentsFromString } from '../services/bsl_csv';
+import { dumpPayments, loadPaymentsFromString } from '../services/payment_csv';
 import { createGD, downloadGD, searchGD, uploadGD } from '../services/googleDrive';
 import { appendPayments } from '../slices/payments';
 import { RootState } from '../store';
@@ -34,13 +34,13 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
                 parentId: 'root',
             });
 
-            let bslFileId = await getPaymentsCSV({ rootFolderId });
-            if (bslFileId !== null) {
-                const rawCSV = await downloadGD({ fileId: bslFileId });
+            let paymentsFileId = await getPaymentsCSV({ rootFolderId });
+            if (paymentsFileId !== null) {
+                const rawCSV = await downloadGD({ fileId: paymentsFileId });
                 dispatch(appendPayments(loadPaymentsFromString(rawCSV)));
                 state = getState();
             } else {
-                bslFileId = await createPaymentCsvMetadata({ parentId: rootFolderId });
+                paymentsFileId = await createPaymentCsvMetadata({ parentId: rootFolderId });
             }
 
             const actsFolderId = await getOrCreateFolder({
@@ -55,7 +55,7 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
 
             if (hasPaymentsBeforeSync) {
                 await uploadGD({
-                    fileId: bslFileId,
+                    fileId: paymentsFileId,
                     body: dumpPayments(state.payments.allPayments),
                 });
             }
