@@ -2,11 +2,11 @@ import { useCallback } from 'react';
 
 import MUIDrawer from '@mui/material/Drawer';
 import MUIList from '@mui/material/List';
+import MUIListItem from '@mui/material/ListItem';
 import MUIListItemButton from '@mui/material/ListItemButton';
 import MUIListItemIcon from '@mui/material/ListItemIcon';
 import MUIListItemText from '@mui/material/ListItemText';
 import MUIDivider from '@mui/material/Divider';
-import MUIBox from '@mui/material/Box';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SyncIcon from '@mui/icons-material/Sync';
@@ -18,6 +18,7 @@ import syncGD from '../thunks/syncGD';
 import useGapi from '../hooks/useGapi';
 import { SIDEBAR_WIDTH, TOKEN_CLIENT_CONFIG } from '../data';
 import useSidebarVisibility from '../hooks/useSidebarVisibility';
+import { prettifyAmount } from '../utils';
 
 const LINKS = [
     { to: '/payments', label: 'Payments', icon: <AccountBalanceIcon /> },
@@ -85,24 +86,28 @@ const Sync = () => {
 };
 
 const Totals = () => {
-    const { year, quarter, total } = useAppSelector((state) => state.payments.lastFiscalPeriodInfo);
+    const lastFiscalPeriodInfo = useAppSelector((state) => state.payments.lastFiscalPeriodInfo);
     const averageIncome = useAppSelector((state) => state.payments.averageIncome);
     return (
-        <MUIBox
-            sx={{
-                px: 2,
-                py: 2,
-            }}
-        >
-            <MUIBox>
-                {year} / {quarter}: {total.toFixed(2)}
-            </MUIBox>
-            <MUIBox>
-                {averageIncome.currentYear.year}: {averageIncome.currentYear.total.toFixed(2)}
-            </MUIBox>
-            <MUIBox>
-                {averageIncome.previousYear.year}: {averageIncome.previousYear.total.toFixed(2)}
-            </MUIBox>
-        </MUIBox>
+        <MUIList>
+            <MUIListItem>
+                <MUIListItemText
+                    primary={prettifyAmount(lastFiscalPeriodInfo.total)}
+                    secondary={`Дохід за ${lastFiscalPeriodInfo.quarter} квартал ${lastFiscalPeriodInfo.year} року`}
+                />
+            </MUIListItem>
+            <MUIListItem>
+                <MUIListItemText
+                    primary={prettifyAmount(averageIncome.currentYear.total)}
+                    secondary={`Середній платіж за ${averageIncome.currentYear.year} рік`}
+                />
+            </MUIListItem>
+            <MUIListItem>
+                <MUIListItemText
+                    primary={prettifyAmount(averageIncome.previousYear.total)}
+                    secondary={`Середній платіж за ${averageIncome.previousYear.year} рік`}
+                />
+            </MUIListItem>
+        </MUIList>
     );
 };
