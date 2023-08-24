@@ -86,6 +86,7 @@ const Sync = () => {
 
 const Totals = () => {
     const { year, quarter, total } = useAppSelector((state) => state.payments.lastFiscalPeriodInfo);
+    const averageIncome = useAppSelector((state) => state.payments.averageIncome);
     return (
         <MUIBox
             sx={{
@@ -93,7 +94,15 @@ const Totals = () => {
                 py: 2,
             }}
         >
-            {year} / {quarter}: {total.toFixed(2)}
+            <MUIBox>
+                {year} / {quarter}: {total.toFixed(2)}
+            </MUIBox>
+            <MUIBox>
+                {averageIncome.currentYear.year}: {averageIncome.currentYear.total.toFixed(2)}
+            </MUIBox>
+            <MUIBox>
+                {averageIncome.previousYear.year}: {averageIncome.previousYear.total.toFixed(2)}
+            </MUIBox>
         </MUIBox>
     );
 };
