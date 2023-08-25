@@ -1,6 +1,6 @@
-import { Action, PayloadAction, ThunkAction, createSlice } from '@reduxjs/toolkit';
+import { type Action, type PayloadAction, type ThunkAction, createSlice } from '@reduxjs/toolkit';
 import { NOTIFICATION_DELAY_MS } from '../data';
-import { RootState } from '../store';
+import { type RootState } from '../store';
 
 type Notification = {
     message: string;

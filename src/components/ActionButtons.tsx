@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import MUIToolbar from '@mui/material/Toolbar';
 import MUIButton from '@mui/material/Button';

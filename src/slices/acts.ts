@@ -1,5 +1,5 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { Act } from '../models/Act';
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { type Act } from '../models/Act';
 import { omitDuplicates } from '../utils';
 
 interface State {

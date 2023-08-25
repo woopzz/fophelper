@@ -15,7 +15,8 @@
         "noUnusedParameters": true,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "verbatimModuleSyntax": true
     },
     "include": ["src"]
 }

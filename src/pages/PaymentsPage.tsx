@@ -1,4 +1,4 @@
-import { ChangeEventHandler, memo, useRef } from 'react';
+import { type ChangeEventHandler, memo, useRef } from 'react';
 
 import MUIPaper from '@mui/material/Paper';
 import MUIButton from '@mui/material/Button';
@@ -7,7 +7,7 @@ import MuiUploadIcon from '@mui/icons-material/Upload';
 
 import { ActionButtons } from '../components/ActionButtons';
 import { ListView } from '../components/ListView';
-import { Payment } from '../models/Payment';
+import { type Payment } from '../models/Payment';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import { loadPaymentsFromFile } from '../services/payment_csv';
 import { appendPayments } from '../slices/payments';

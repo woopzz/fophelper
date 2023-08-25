@@ -4,7 +4,7 @@ import MuiIconButton from '@mui/material/IconButton';
 import MUIPaper from '@mui/material/Paper';
 
 import { ListView } from '../components/ListView';
-import { Act } from '../models/Act';
+import { type Act } from '../models/Act';
 import { useAppSelector } from '../hooks/store';
 import { ActionButtons } from '../components/ActionButtons';
 

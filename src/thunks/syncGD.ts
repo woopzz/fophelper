@@ -1,8 +1,8 @@
-import { ThunkAction, Action } from '@reduxjs/toolkit';
+import { type ThunkAction, type Action } from '@reduxjs/toolkit';
 import { dumpPayments, loadPaymentsFromString } from '../services/payment_csv';
 import { createGD, downloadGD, searchGD, uploadGD } from '../services/googleDrive';
 import { appendPayments } from '../slices/payments';
-import { RootState } from '../store';
+import { type RootState } from '../store';
 import { changeSyncStatus } from '../slices/gapi';
 import { notify } from '../slices/notification';
 import {
@@ -13,7 +13,7 @@ import {
     GD_ROOT_FOLDER_NAME,
 } from '../data';
 import CustomError from '../models/CustomError';
-import { Act } from '../models/Act';
+import { type Act } from '../models/Act';
 import { appendActs } from '../slices/acts';
 
 export default function syncGD(): ThunkAction<void, RootState, unknown, Action> {

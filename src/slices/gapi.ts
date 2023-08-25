@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface State {
     syncStatus: 'idle' | 'pending' | 'succeeded' | 'failed';
