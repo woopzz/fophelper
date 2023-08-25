@@ -21,15 +21,6 @@ export function calcQuarter(date: Date) {
     }
 }
 
-export function omitDuplicates<T>(records: T[], key: keyof T & string): T[] {
-    const keyToRecord = new Map<T[typeof key], T>();
-
-    for (const record of records) {
-        keyToRecord.set(record[key], record);
-    }
-    return Array.from(keyToRecord.values());
-}
-
 function prettifyNumber(number: number | string): string {
     const parts = number.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');

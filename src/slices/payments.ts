@@ -1,9 +1,15 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { sortPaymentsByDate, type Payment } from '../models/Payment';
-import { calcQuarter, omitDuplicates } from '../utils';
+import { createEntityAdapter, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-interface State {
-    allPayments: Payment[];
+import { type Payment } from '../models/Payment';
+import { calcQuarter } from '../utils';
+import { type RootState } from '../store';
+
+const paymentsAdapter = createEntityAdapter<Payment>({
+    selectId: (payment) => payment.docNo,
+    sortComparer: (a, b) => b.time - a.time,
+});
+
+interface BaseState {
     lastFiscalPeriodInfo: {
         quarter: number;
         year: number;
@@ -21,14 +27,16 @@ interface State {
     };
 }
 
+const initialState = paymentsAdapter.getInitialState<BaseState>(calcInitialBaseState());
+
+type State = typeof initialState;
+
 export const paymentsSlice = createSlice({
     name: 'payments',
-    initialState: calcInitialState(),
+    initialState: initialState,
     reducers: {
         appendPayments: (state, action: PayloadAction<Payment[]>) => {
-            const newPayments = action.payload;
-            const payments = [...state.allPayments, ...newPayments];
-            state.allPayments = sortPaymentsByDate(omitDuplicates(payments, 'docNo'), { reverse: true });
+            paymentsAdapter.addMany(state, action.payload);
             state.lastFiscalPeriodInfo.total = calcLastFiscalPeriodTotal(state);
             state.averageIncome = calcAverageIncome(state);
         },
@@ -37,9 +45,11 @@ export const paymentsSlice = createSlice({
 
 export const { appendPayments } = paymentsSlice.actions;
 
+export const { selectAll: selectAllPayments } = paymentsAdapter.getSelectors<RootState>((state) => state.payments);
+
 export default paymentsSlice.reducer;
 
-function calcInitialState(): State {
+function calcInitialBaseState(): BaseState {
     const now = new Date();
 
     let quarter = calcQuarter(now) - 1;
@@ -50,7 +60,6 @@ function calcInitialState(): State {
     }
 
     return {
-        allPayments: [],
         lastFiscalPeriodInfo: { quarter, year, total: 0 },
         averageIncome: {
             currentYear: {
@@ -66,9 +75,11 @@ function calcInitialState(): State {
 }
 
 function calcLastFiscalPeriodTotal(state: State): State['lastFiscalPeriodInfo']['total'] {
-    const { lastFiscalPeriodInfo, allPayments } = state;
+    const { ids: paymentIds, entities: paymentIdToPayment, lastFiscalPeriodInfo } = state;
     const { quarter, year } = lastFiscalPeriodInfo;
-    return allPayments.reduce((acum, payment) => {
+
+    return paymentIds.reduce<number>((acum, paymentId) => {
+        const payment = paymentIdToPayment[paymentId] as Payment;
         const date = new Date(payment.time);
         if (date.getFullYear() === year && payment.quarter === quarter) {
             acum += payment.amount;
@@ -78,7 +89,7 @@ function calcLastFiscalPeriodTotal(state: State): State['lastFiscalPeriodInfo'][
 }
 
 function calcAverageIncome(state: State): State['averageIncome'] {
-    const { allPayments } = state;
+    const { ids: paymentIds, entities: paymentIdToPayment } = state;
 
     const now = new Date();
 
@@ -91,8 +102,8 @@ function calcAverageIncome(state: State): State['averageIncome'] {
     let currentCount = 0;
     let previousCount = 0;
 
-    for (let i = 0; i < allPayments.length; i++) {
-        const payment = allPayments[i];
+    for (let i = 0; i < paymentIds.length; i++) {
+        const payment = paymentIdToPayment[paymentIds[i]] as Payment;
         const date = new Date(payment.time);
         const year = date.getFullYear();
         if (year === currentYear) {

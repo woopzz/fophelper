@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux';
+
 import MuiOpenInNewIcon from '@mui/icons-material/OpenInNew';
 import MuiLink from '@mui/material/Link';
 import MuiIconButton from '@mui/material/IconButton';
@@ -5,11 +7,11 @@ import MUIPaper from '@mui/material/Paper';
 
 import { ListView } from '../components/ListView';
 import { type Act } from '../models/Act';
-import { useAppSelector } from '../hooks/store';
 import { ActionButtons } from '../components/ActionButtons';
+import { selectAllActs } from '../slices/acts';
 
 export const ActsPage = () => {
-    const { allActs } = useAppSelector((state) => state.acts);
+    const allActs = useSelector(selectAllActs);
 
     return (
         <MUIPaper>

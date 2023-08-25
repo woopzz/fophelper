@@ -1,30 +1,26 @@
-import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { type PayloadAction, createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import { type Act } from '../models/Act';
-import { omitDuplicates } from '../utils';
+import { type RootState } from '../store';
 
-interface State {
-    allActs: Act[];
-}
+const actsAdapter = createEntityAdapter<Act>({
+    selectId: (act) => act.gdId,
+    sortComparer: (a, b) => (a.name > b.name ? -1 : 1),
+});
 
-const state: State = {
-    allActs: [],
-};
+const initialState = actsAdapter.getInitialState();
 
 const actsSlice = createSlice({
     name: 'acts',
-    initialState: state,
+    initialState,
     reducers: {
         appendActs: (state, action: PayloadAction<Act[]>) => {
-            const newActs = action.payload;
-            state.allActs = sortByName(omitDuplicates(newActs, 'name'));
+            actsAdapter.addMany(state, action.payload);
         },
     },
 });
 
 export const { appendActs } = actsSlice.actions;
 
-export default actsSlice.reducer;
+export const { selectAll: selectAllActs } = actsAdapter.getSelectors<RootState>((state) => state.acts);
 
-function sortByName(acts: Act[]) {
-    return acts.sort((a, b) => (a.name > b.name ? 1 : -1));
-}
+export default actsSlice.reducer;

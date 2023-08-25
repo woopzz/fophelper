@@ -1,5 +1,7 @@
 import { type ChangeEventHandler, memo, useRef } from 'react';
 
+import { useSelector } from 'react-redux';
+
 import MUIPaper from '@mui/material/Paper';
 import MUIButton from '@mui/material/Button';
 import MUIInput from '@mui/material/Input';
@@ -8,12 +10,12 @@ import MuiUploadIcon from '@mui/icons-material/Upload';
 import { ActionButtons } from '../components/ActionButtons';
 import { ListView } from '../components/ListView';
 import { type Payment } from '../models/Payment';
-import { useAppDispatch, useAppSelector } from '../hooks/store';
+import { useAppDispatch } from '../hooks/store';
 import { loadPaymentsFromFile } from '../services/payment_csv';
-import { appendPayments } from '../slices/payments';
+import { appendPayments, selectAllPayments } from '../slices/payments';
 
 export const PaymentsPage = () => {
-    const { allPayments } = useAppSelector((state) => state.payments);
+    const allPayments = useSelector(selectAllPayments);
     return (
         <MUIPaper>
             <ActionButtons buttons={<UploadActionButton />} />

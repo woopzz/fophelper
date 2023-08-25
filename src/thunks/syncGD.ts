@@ -1,4 +1,5 @@
 import { type ThunkAction, type Action } from '@reduxjs/toolkit';
+
 import { dumpPayments, loadPaymentsFromString } from '../services/payment_csv';
 import { createGD, downloadGD, searchGD, uploadGD } from '../services/googleDrive';
 import { appendPayments } from '../slices/payments';
@@ -13,6 +14,7 @@ import {
     GD_ROOT_FOLDER_NAME,
 } from '../data';
 import CustomError from '../models/CustomError';
+import { type Payment } from '../models/Payment';
 import { type Act } from '../models/Act';
 import { appendActs } from '../slices/acts';
 
@@ -25,7 +27,7 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
         }
         dispatch(changeSyncStatus('pending'));
 
-        const hasPaymentsBeforeSync = state.payments.allPayments.length > 0;
+        const hasPaymentsBeforeSync = state.payments.ids.length > 0;
 
         console.debug('run sync');
         try {
@@ -56,7 +58,9 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
             if (hasPaymentsBeforeSync) {
                 await uploadGD({
                     fileId: paymentsFileId,
-                    body: dumpPayments(state.payments.allPayments),
+                    body: dumpPayments(
+                        state.payments.ids.map((paymentId) => state.payments.entities[paymentId] as Payment),
+                    ),
                 });
             }
             dispatch(changeSyncStatus('succeeded'));

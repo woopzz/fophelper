@@ -61,11 +61,6 @@ export function createPayment(values: string[]): Payment {
     return self;
 }
 
-export const sortPaymentsByDate = (payments: Payment[], { reverse = false }) => {
-    const coef = reverse ? -1 : 1;
-    return payments.sort((a, b) => coef * (calcPaymentDate(a).getTime() - calcPaymentDate(b).getTime()));
-};
-
 const calcPaymentDate = (payment: Payment): Date => {
     return new Date(payment.dateStr.split('.').reverse().join('-'));
 };
