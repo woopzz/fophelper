@@ -10,6 +10,7 @@ import MUIDivider from '@mui/material/Divider';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SyncIcon from '@mui/icons-material/Sync';
+import LinkIcon from '@mui/icons-material/Link';
 
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -23,6 +24,7 @@ import { prettifyAmount } from '../utils';
 const LINKS = [
     { to: '/payments', label: 'Payments', icon: <AccountBalanceIcon /> },
     { to: '/acts', label: 'Acts', icon: <DescriptionIcon /> },
+    { to: '/matchings', label: 'Matchings', icon: <LinkIcon /> },
 ];
 
 export const Sidebar = () => {

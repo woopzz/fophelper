@@ -45,7 +45,9 @@ export const paymentsSlice = createSlice({
 
 export const { appendPayments } = paymentsSlice.actions;
 
-export const { selectAll: selectAllPayments } = paymentsAdapter.getSelectors<RootState>((state) => state.payments);
+export const { selectAll: selectAllPayments, selectById: selectPaymentById } = paymentsAdapter.getSelectors<RootState>(
+    (state) => state.payments,
+);
 
 export default paymentsSlice.reducer;
 

@@ -21,6 +21,8 @@ const actsSlice = createSlice({
 
 export const { appendActs } = actsSlice.actions;
 
-export const { selectAll: selectAllActs } = actsAdapter.getSelectors<RootState>((state) => state.acts);
+export const { selectAll: selectAllActs, selectById: selectActById } = actsAdapter.getSelectors<RootState>(
+    (state) => state.acts,
+);
 
 export default actsSlice.reducer;
