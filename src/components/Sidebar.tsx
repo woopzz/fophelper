@@ -94,19 +94,19 @@ const Totals = () => {
         <MUIList>
             <MUIListItem>
                 <MUIListItemText
-                    primary={prettifyAmount(lastFiscalPeriodInfo.total)}
+                    primary={prettifyAmount({ number: lastFiscalPeriodInfo.total })}
                     secondary={`Дохід за ${lastFiscalPeriodInfo.quarter} квартал ${lastFiscalPeriodInfo.year} року`}
                 />
             </MUIListItem>
             <MUIListItem>
                 <MUIListItemText
-                    primary={prettifyAmount(averageIncome.currentYear.total)}
+                    primary={prettifyAmount({ number: averageIncome.currentYear.total, unit: 'грн/міс.' })}
                     secondary={`Середній платіж за ${averageIncome.currentYear.year} рік`}
                 />
             </MUIListItem>
             <MUIListItem>
                 <MUIListItemText
-                    primary={prettifyAmount(averageIncome.previousYear.total)}
+                    primary={prettifyAmount({ number: averageIncome.previousYear.total, unit: 'грн/міс.' })}
                     secondary={`Середній платіж за ${averageIncome.previousYear.year} рік`}
                 />
             </MUIListItem>

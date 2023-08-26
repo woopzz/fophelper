@@ -101,8 +101,8 @@ function calcAverageIncome(state: State): State['averageIncome'] {
     let currentTotal = 0;
     let previousTotal = 0;
 
-    let currentCount = 0;
-    let previousCount = 0;
+    const currentUniqMonthYear = new Set<string>();
+    const previousUniqMonthYear = new Set<string>();
 
     for (let i = 0; i < paymentIds.length; i++) {
         const payment = paymentIdToPayment[paymentIds[i]] as Payment;
@@ -110,21 +110,21 @@ function calcAverageIncome(state: State): State['averageIncome'] {
         const year = date.getFullYear();
         if (year === currentYear) {
             currentTotal += payment.amount;
-            currentCount++;
+            currentUniqMonthYear.add(`${year}-${date.getMonth()}`);
         } else if (year === previousYear) {
             previousTotal += payment.amount;
-            previousCount++;
+            previousUniqMonthYear.add(`${year}-${date.getMonth()}`);
         }
     }
 
     return {
         currentYear: {
             year: currentYear,
-            total: currentCount && currentTotal / currentCount,
+            total: currentUniqMonthYear.size && currentTotal / currentUniqMonthYear.size,
         },
         previousYear: {
             year: previousYear,
-            total: previousCount && previousTotal / previousCount,
+            total: previousUniqMonthYear.size && previousTotal / previousUniqMonthYear.size,
         },
     };
 }

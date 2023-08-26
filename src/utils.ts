@@ -27,6 +27,6 @@ function prettifyNumber(number: number | string): string {
     return parts.join('.');
 }
 
-export function prettifyAmount(number: number): string {
-    return prettifyNumber(Number(number).toFixed(2)) + ' грн';
+export function prettifyAmount({ number, unit = 'грн' }: { number: number; unit?: string }): string {
+    return prettifyNumber(Number(number).toFixed(2)) + ' ' + unit;
 }
