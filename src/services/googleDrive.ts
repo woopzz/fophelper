@@ -50,12 +50,9 @@ export async function downloadGD({ fileId }: { fileId: GD_FILE_ID }): Promise<st
     }
 }
 
-export async function uploadGD({ fileId, body }: { fileId: GD_FILE_ID; body: string }) {
+export async function uploadGD({ name, fileId, body }: { name: string; fileId: GD_FILE_ID; body: string }) {
     try {
-        const metadata = {
-            name: GD_PAYMENT_CSV_NAME,
-            mimeType: 'text/csv',
-        };
+        const metadata = { name, mimeType: 'text/csv' };
 
         const form = new FormData();
         form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));

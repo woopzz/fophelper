@@ -1,10 +1,33 @@
 import * as csv from 'jquery-csv';
+
 import { CSV_FIELD_TO_PAYMENT_CSV_FIELD, type Payment, createPayment } from '../models/Payment';
+import { type Matching } from '../models/Matching';
 
 const csvOptions: csv.TOptions = {
     separator: ';',
     delimiter: '\'', // prettier-ignore
 };
+
+const MATCHING_COLUMNS = ['PaymentId', 'ActId'];
+
+export function loadMatchingsFromString(data: string): Array<{ paymentId: string; actId: string }> {
+    const res = csv.toArrays(data, csvOptions) as string[][];
+    if (res.length < 2 || res[0][0] !== MATCHING_COLUMNS[0]) {
+        return [];
+    }
+
+    return res.slice(1).map((x) => ({ paymentId: x[0], actId: x[1] }));
+}
+
+export function dumpMatchings(matchings: Matching[]): string {
+    const csvArrays = [MATCHING_COLUMNS];
+
+    for (const matching of matchings) {
+        csvArrays.push([matching.paymentId as string, matching.actId as string]);
+    }
+
+    return csv.fromArrays(csvArrays, csvOptions);
+}
 
 export async function loadPaymentsFromFile(file: File): Promise<Payment[]> {
     const isWin1251 = await isWindows1251(file);
