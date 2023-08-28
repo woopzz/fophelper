@@ -50,6 +50,8 @@ const MatchingsTable = () => {
                 <MUITableHead>
                     <MUITableRow>
                         <MUITableCell>Номер платежу</MUITableCell>
+                        <MUITableCell>Сума платежу</MUITableCell>
+                        <MUITableCell>Дата платежу</MUITableCell>
                         <MUITableCell>Назва акту</MUITableCell>
                         <MUITableCell />
                     </MUITableRow>
@@ -83,6 +85,8 @@ const MatchingsTableRow = ({ matching }: MatchingsTableRowProps) => {
     return (
         <MUITableRow>
             <MUITableCell>{payment.docNo}</MUITableCell>
+            <MUITableCell>{payment.amountStr}</MUITableCell>
+            <MUITableCell>{payment.dateStr}</MUITableCell>
             <MUITableCell>{act.name}</MUITableCell>
             <MUITableCell align="right">
                 <MUIIconButton onClick={handleUnlink}>
@@ -140,7 +144,7 @@ const NewActionButton = () => {
                 <MUIDialogTitle>Нове співставлення</MUIDialogTitle>
                 <MUIDialogContent sx={{ px: 3, py: 1 }}>
                     <MUIBox sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                        <MUIFormControl sx={{ m: 1, width: { xs: 1, sm: 200 } }}>
+                        <MUIFormControl required sx={{ m: 1, width: { xs: 1, sm: 200 } }}>
                             <MUIInputLabel id="matching-select-payment">Платіж</MUIInputLabel>
                             <MUISelect
                                 labelId="matching-select-payment"
@@ -151,12 +155,12 @@ const NewActionButton = () => {
                                 <MUIMenuItem value="">Не вибрано</MUIMenuItem>
                                 {unmatchedPayments.map((payment) => (
                                     <MUIMenuItem key={payment.docNo} value={payment.docNo}>
-                                        {payment.docNo}
+                                        {`${payment.docNo} (${payment.amountStr} за ${payment.dateStr})`}
                                     </MUIMenuItem>
                                 ))}
                             </MUISelect>
                         </MUIFormControl>
-                        <MUIFormControl sx={{ m: 1, width: { xs: 1, sm: 200 } }}>
+                        <MUIFormControl required sx={{ m: 1, width: { xs: 1, sm: 200 } }}>
                             <MUIInputLabel id="matching-select-act">Акт</MUIInputLabel>
                             <MUISelect
                                 labelId="matching-select-act"
