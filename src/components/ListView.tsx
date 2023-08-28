@@ -1,11 +1,17 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+
+import MUITable from '@mui/material/Table';
+import MUITableContainer from '@mui/material/TableContainer';
+import MUITableBody from '@mui/material/TableBody';
+import MUITableHead from '@mui/material/TableHead';
+import MUITableRow from '@mui/material/TableRow';
+import MUITableCell from '@mui/material/TableCell';
 
 interface FieldInfo<M> {
     key: React.Key;
     label: string;
     getDisplayValue: (record: M) => string;
-    align?: Parameters<typeof TableCell>[0]['align'];
+    align?: Parameters<typeof MUITableCell>[0]['align'];
 }
 
 interface Action<M> {
@@ -22,36 +28,36 @@ interface ListViewProps<M> {
 
 export const ListView = <M,>({ records, getRecordKey, fieldsInfo, actions = [] }: ListViewProps<M>) => {
     const headRowCells = fieldsInfo.map(({ key, label, align }) => (
-        <TableCell key={key} align={align}>
+        <MUITableCell key={key} align={align}>
             {label}
-        </TableCell>
+        </MUITableCell>
     ));
 
-    headRowCells.push(...actions.map(({ key }) => <TableCell key={key} />));
+    headRowCells.push(...actions.map(({ key }) => <MUITableCell key={key} />));
 
     const bodyRowsCells = records.map((record) => (
-        <TableRow key={getRecordKey(record)}>
+        <MUITableRow key={getRecordKey(record)}>
             {fieldsInfo.map(({ key, align, getDisplayValue }) => (
-                <TableCell key={key} align={align}>
+                <MUITableCell key={key} align={align}>
                     {getDisplayValue(record)}
-                </TableCell>
+                </MUITableCell>
             ))}
             {actions.map((action) => (
-                <TableCell key={action.key} align="right">
+                <MUITableCell key={action.key} align="right">
                     {action.getReactNode(record)}
-                </TableCell>
+                </MUITableCell>
             ))}
-        </TableRow>
+        </MUITableRow>
     ));
 
     return (
-        <TableContainer>
-            <Table>
-                <TableHead>
-                    <TableRow>{headRowCells}</TableRow>
-                </TableHead>
-                <TableBody>{bodyRowsCells}</TableBody>
-            </Table>
-        </TableContainer>
+        <MUITableContainer>
+            <MUITable>
+                <MUITableHead>
+                    <MUITableRow>{headRowCells}</MUITableRow>
+                </MUITableHead>
+                <MUITableBody>{bodyRowsCells}</MUITableBody>
+            </MUITable>
+        </MUITableContainer>
     );
 };

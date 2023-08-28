@@ -7,10 +7,10 @@ import MUIListItemButton from '@mui/material/ListItemButton';
 import MUIListItemIcon from '@mui/material/ListItemIcon';
 import MUIListItemText from '@mui/material/ListItemText';
 import MUIDivider from '@mui/material/Divider';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import DescriptionIcon from '@mui/icons-material/Description';
-import SyncIcon from '@mui/icons-material/Sync';
-import LinkIcon from '@mui/icons-material/Link';
+import MUIAccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import MUIDescriptionIcon from '@mui/icons-material/Description';
+import MUISyncIcon from '@mui/icons-material/Sync';
+import MUILinkIcon from '@mui/icons-material/Link';
 
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -22,9 +22,9 @@ import useSidebarVisibility from '../hooks/useSidebarVisibility';
 import { prettifyAmount } from '../utils';
 
 const LINKS = [
-    { to: '/payments', label: 'Payments', icon: <AccountBalanceIcon /> },
-    { to: '/acts', label: 'Acts', icon: <DescriptionIcon /> },
-    { to: '/matchings', label: 'Matchings', icon: <LinkIcon /> },
+    { to: '/payments', label: 'Payments', icon: <MUIAccountBalanceIcon /> },
+    { to: '/acts', label: 'Acts', icon: <MUIDescriptionIcon /> },
+    { to: '/matchings', label: 'Matchings', icon: <MUILinkIcon /> },
 ];
 
 export const Sidebar = () => {
@@ -79,7 +79,7 @@ const Sync = () => {
         <MUIList>
             <MUIListItemButton onClick={handleClick} disabled={syncStatus === 'pending'}>
                 <MUIListItemIcon>
-                    <SyncIcon />
+                    <MUISyncIcon />
                 </MUIListItemIcon>
                 <MUIListItemText primary={'Sync'} />
             </MUIListItemButton>

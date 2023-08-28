@@ -1,4 +1,5 @@
 import { type PayloadAction, createSlice, createEntityAdapter } from '@reduxjs/toolkit';
+
 import { type Act } from '../models/Act';
 import { type RootState } from '../store';
 

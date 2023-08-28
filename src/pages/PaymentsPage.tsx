@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import MUIPaper from '@mui/material/Paper';
 import MUIButton from '@mui/material/Button';
 import MUIInput from '@mui/material/Input';
-import MuiUploadIcon from '@mui/icons-material/Upload';
+import MUIUploadIcon from '@mui/icons-material/Upload';
 
 import { ActionButtons } from '../components/ActionButtons';
 import { ListView } from '../components/ListView';
@@ -50,7 +50,7 @@ const UploadActionButton = memo(function UploadActionButton() {
     return (
         <>
             <MUIInput type="file" onChange={handleFileInputChange} inputRef={inputEl} sx={{ display: 'none' }} />
-            <MUIButton variant="outlined" startIcon={<MuiUploadIcon />} onClick={handleImportButtonClick}>
+            <MUIButton variant="outlined" startIcon={<MUIUploadIcon />} onClick={handleImportButtonClick}>
                 Завантажити CSV
             </MUIButton>
         </>

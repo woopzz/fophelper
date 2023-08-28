@@ -1,4 +1,4 @@
-import type { EntityId } from '@reduxjs/toolkit';
+import { type EntityId } from '@reduxjs/toolkit';
 
 export type Matching = {
     id: EntityId;

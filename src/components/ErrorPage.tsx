@@ -1,4 +1,5 @@
 import { type FallbackProps } from 'react-error-boundary';
+
 import CustomError from '../models/CustomError';
 
 const ErrorPage = ({ error }: FallbackProps) => {

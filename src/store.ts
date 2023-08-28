@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+
 import PaymentReducer from './slices/payments';
 import ActReducer from './slices/acts';
 import MatchingsReducer from './slices/matchings';

@@ -4,15 +4,15 @@
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { HashRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
+import { Provider } from 'react-redux';
 
 import { App } from './components/App';
 import Error from './components/ErrorPage';
 import { GapiProvider } from './hooks/useGapi';
 import { API_KEY, DISCOVERY_DOC } from './data';
-import { Provider } from 'react-redux';
 import store from './store';
-import { HashRouter } from 'react-router-dom';
 
 const gapiClientInitOptions = {
     apiKey: API_KEY,
