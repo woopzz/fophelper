@@ -1,7 +1,11 @@
-import { type Act } from './Act';
-import { type Payment } from './Payment';
+import type { EntityId } from '@reduxjs/toolkit';
 
 export type Matching = {
-    paymentId: Payment['docNo'];
-    actId: Act['gdId'];
+    id: EntityId;
+    paymentId: EntityId;
+    actId: EntityId;
+};
+
+export const calcMatchingId = (paymentId: EntityId, actId: EntityId) => {
+    return `${paymentId}-${actId}`;
 };
