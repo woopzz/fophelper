@@ -7,7 +7,6 @@ import MUIPaper from '@mui/material/Paper';
 
 import { ListView } from '../components/ListView';
 import { type Act } from '../models/Act';
-import { ActionButtons } from '../components/ActionButtons';
 import { selectAllActs } from '../slices/acts';
 
 export const ActsPage = () => {
@@ -15,7 +14,6 @@ export const ActsPage = () => {
 
     return (
         <MUIPaper>
-            <ActionButtons />
             <ListView<Act>
                 records={allActs}
                 fieldsInfo={[{ key: 'name', label: 'Назва', getDisplayValue: getActName }]}

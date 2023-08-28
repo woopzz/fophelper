@@ -1,24 +1,15 @@
-import { type ChangeEventHandler, memo, useRef } from 'react';
-
 import { useSelector } from 'react-redux';
 
 import MUIPaper from '@mui/material/Paper';
-import MUIButton from '@mui/material/Button';
-import MUIInput from '@mui/material/Input';
-import MUIUploadIcon from '@mui/icons-material/Upload';
 
-import { ActionButtons } from '../components/ActionButtons';
 import { ListView } from '../components/ListView';
 import { type Payment } from '../models/Payment';
-import { useAppDispatch } from '../hooks/store';
-import { loadPaymentsFromFile } from '../services/payment_csv';
-import { appendPayments, selectAllPayments } from '../slices/payments';
+import { selectAllPayments } from '../slices/payments';
 
 export const PaymentsPage = () => {
     const allPayments = useSelector(selectAllPayments);
     return (
         <MUIPaper>
-            <ActionButtons buttons={<UploadActionButton />} />
             <ListView<Payment>
                 records={allPayments}
                 fieldsInfo={[
@@ -31,31 +22,6 @@ export const PaymentsPage = () => {
         </MUIPaper>
     );
 };
-
-const UploadActionButton = memo(function UploadActionButton() {
-    const dispatch = useAppDispatch();
-
-    const inputEl = useRef<HTMLInputElement>(null);
-
-    const handleImportButtonClick = () => inputEl.current?.click();
-
-    const handleFileInputChange: ChangeEventHandler<HTMLInputElement> = async (ev) => {
-        const files = ev.target.files;
-        if (files !== null && files.length > 0) {
-            const newPayments = await loadPaymentsFromFile(files[0]);
-            dispatch(appendPayments(newPayments));
-        }
-    };
-
-    return (
-        <>
-            <MUIInput type="file" onChange={handleFileInputChange} inputRef={inputEl} sx={{ display: 'none' }} />
-            <MUIButton variant="outlined" startIcon={<MUIUploadIcon />} onClick={handleImportButtonClick}>
-                Завантажити CSV
-            </MUIButton>
-        </>
-    );
-});
 
 function getRecordKey(payment: Payment): React.Key {
     return payment.docNo;
