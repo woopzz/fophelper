@@ -13,7 +13,7 @@ export const Layout = () => {
             <MUICssBaseline />
             <SidebarVisibilityProvider>
                 <Sidebar />
-                <MUIContainer maxWidth="lg">
+                <MUIContainer sx={{ my: 1 }} maxWidth="lg">
                     <Outlet />
                 </MUIContainer>
             </SidebarVisibilityProvider>
