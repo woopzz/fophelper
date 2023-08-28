@@ -1,9 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-// TODO production mode
+const PROD_MODE = process.env.NODE_ENV === 'production';
+const DEV_MODE = !PROD_MODE;
+console.log('production mode:', PROD_MODE);
+
 const config = {
-    mode: 'development',
     entry: buildPath('src', 'index.tsx'),
     output: {
         filename: 'bundle.[contenthash].js',
@@ -12,10 +14,6 @@ const config = {
     },
     resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    },
-    devtool: 'eval-source-map',
-    devServer: {
-        static: './dist',
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -47,6 +45,22 @@ const config = {
         ],
     },
 };
+
+if (DEV_MODE) {
+    Object.assign(config, {
+        mode: 'development',
+        devtool: 'eval-source-map',
+        devServer: {
+            static: './dist',
+        },
+    });
+}
+
+if (PROD_MODE) {
+    Object.assign(config, {
+        mode: 'production',
+    });
+}
 
 function buildPath(...names) {
     return path.resolve(__dirname, ...names);
