@@ -15,7 +15,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../hooks/store';
-import syncGD from '../thunks/syncGD';
+import syncGD from '../slices/extraThunks/syncGD';
 import useGapi from '../hooks/useGapi';
 import { SIDEBAR_WIDTH, TOKEN_CLIENT_CONFIG } from '../data';
 import useSidebarVisibility from '../hooks/useSidebarVisibility';

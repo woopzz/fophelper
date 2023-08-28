@@ -1,22 +1,22 @@
 import { type ThunkAction, type Action } from '@reduxjs/toolkit';
 
-import { dumpPayments, loadPaymentsFromString } from '../services/payment_csv';
-import { createGD, downloadGD, searchGD, uploadGD } from '../services/googleDrive';
-import { appendPayments } from '../slices/payments';
-import { type RootState } from '../store';
-import { changeSyncStatus } from '../slices/gapi';
-import { notify } from '../slices/notification';
+import { dumpPayments, loadPaymentsFromString } from '../../services/payment_csv';
+import { createGD, downloadGD, searchGD, uploadGD } from '../../services/googleDrive';
+import { appendPayments } from '../payments';
+import { type RootState } from '../../store';
+import { changeSyncStatus } from '../gapi';
+import { notify } from '../notification';
 import {
     GD_ACTS_FOLDER_NAME,
     GD_FOLDER_MIMETYPE,
     GD_PAYMENT_CSV_NAME,
     GD_PDF_MIMETYPE,
     GD_ROOT_FOLDER_NAME,
-} from '../data';
-import CustomError from '../models/CustomError';
-import { type Payment } from '../models/Payment';
-import { type Act } from '../models/Act';
-import { appendActs } from '../slices/acts';
+} from '../../data';
+import CustomError from '../../models/CustomError';
+import { type Payment } from '../../models/Payment';
+import { type Act } from '../../models/Act';
+import { appendActs } from '../acts';
 
 export default function syncGD(): ThunkAction<void, RootState, unknown, Action> {
     return async function (dispatch, getState) {
