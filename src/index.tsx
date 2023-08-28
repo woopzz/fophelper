@@ -31,6 +31,7 @@ const theme = createTheme({
     components: {
         MuiButton: {
             defaultProps: {
+                size: 'small',
                 disableElevation: true,
             },
         },
