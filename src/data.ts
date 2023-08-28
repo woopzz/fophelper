@@ -13,7 +13,7 @@ export const GD_ACTS_FOLDER_NAME = 'Acts';
 export const GD_PAYMENT_CSV_NAME = 'payments.csv';
 export const GD_MATCHING_CSV_NAME = 'matchings.csv';
 
-export const GD_ERROR_BAD_STATUS = 'Bad response status';
+export const GD_ERROR_BAD_STATUS = 'Незадовільний статус відповіді';
 
 export const NOTIFICATION_DELAY_MS = 3000;
 

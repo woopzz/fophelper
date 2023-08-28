@@ -22,9 +22,9 @@ import useSidebarVisibility from '../hooks/useSidebarVisibility';
 import { prettifyAmount } from '../utils';
 
 const LINKS = [
-    { to: '/payments', label: 'Payments', icon: <MUIAccountBalanceIcon /> },
-    { to: '/acts', label: 'Acts', icon: <MUIDescriptionIcon /> },
-    { to: '/matchings', label: 'Matchings', icon: <MUILinkIcon /> },
+    { to: '/payments', label: 'Платежі', icon: <MUIAccountBalanceIcon /> },
+    { to: '/acts', label: 'Акти', icon: <MUIDescriptionIcon /> },
+    { to: '/matchings', label: 'Співставлення', icon: <MUILinkIcon /> },
 ];
 
 export const Sidebar = () => {
@@ -81,7 +81,7 @@ const Sync = () => {
                 <MUIListItemIcon>
                     <MUISyncIcon />
                 </MUIListItemIcon>
-                <MUIListItemText primary={'Sync'} />
+                <MUIListItemText primary={'Синхронізація'} />
             </MUIListItemButton>
         </MUIList>
     );

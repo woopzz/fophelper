@@ -58,7 +58,7 @@ const MatchingsTableRow = ({ matching }: MatchingsTableRowProps) => {
     const act = useAppSelector((state) => selectActById(state, matching.actId));
 
     if (!payment || !act) {
-        console.error('selectById returned undefined.');
+        console.error('selectById повернув undefined.');
         throw new Error();
     }
 

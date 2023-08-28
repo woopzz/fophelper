@@ -42,7 +42,7 @@ export function createPayment(values: string[]): Payment {
 
     // docNo is used to indentify a payment, so it's required.
     if (!self.docNo) {
-        const msg = 'A payment does not have a number!';
+        const msg = 'Платіж без номеру!';
         alert(msg);
         throw Error(msg);
     }
