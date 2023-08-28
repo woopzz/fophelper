@@ -27,7 +27,7 @@ import MUILinkOffIcon from '@mui/icons-material/LinkOff';
 
 import { ActionButtons } from '../components/ActionButtons';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
-import { calcMatchingId, type Matching } from '../models/Matching';
+import { type Matching } from '../models/Matching';
 import { appendMatchings, removeMatching, selectAllMatchings } from '../slices/matchings';
 import { selectPaymentById } from '../slices/payments';
 import { selectActById, selectAllActs } from '../slices/acts';
@@ -124,7 +124,7 @@ const NewActionButton = () => {
 
     const handleCreate = () => {
         if (paymentId && actId) {
-            dispatch(appendMatchings([{ id: calcMatchingId(paymentId, actId), paymentId, actId }]));
+            dispatch(appendMatchings([{ paymentId, actId }]));
             setPaymentId('');
             setActId('');
             setOpen(false);
