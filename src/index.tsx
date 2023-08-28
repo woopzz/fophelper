@@ -8,6 +8,9 @@ import { HashRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Provider } from 'react-redux';
 
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { blueGrey } from '@mui/material/colors';
+
 import { App } from './components/App';
 import Error from './components/ErrorPage';
 import { GapiProvider } from './hooks/useGapi';
@@ -19,6 +22,21 @@ const gapiClientInitOptions = {
     discoveryDocs: [DISCOVERY_DOC],
 };
 
+const theme = createTheme({
+    palette: {
+        background: {
+            default: blueGrey[50],
+        },
+    },
+    components: {
+        MuiButton: {
+            defaultProps: {
+                disableElevation: true,
+            },
+        },
+    },
+});
+
 const appNode = document.getElementById('app');
 if (appNode !== null) {
     const root = createRoot(appNode);
@@ -28,7 +46,9 @@ if (appNode !== null) {
                 <GapiProvider clientInitOptions={gapiClientInitOptions}>
                     <Provider store={store}>
                         <HashRouter>
-                            <App />
+                            <ThemeProvider theme={theme}>
+                                <App />
+                            </ThemeProvider>
                         </HashRouter>
                     </Provider>
                 </GapiProvider>
