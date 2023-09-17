@@ -15,7 +15,7 @@ import { App } from './components/App';
 import Error from './components/ErrorPage';
 import { GapiProvider } from './hooks/useGapi';
 import { API_KEY, DISCOVERY_DOC } from './data';
-import store from './store';
+import { setupStore } from './store';
 
 const gapiClientInitOptions = {
     apiKey: API_KEY,
@@ -45,7 +45,7 @@ if (appNode !== null) {
         <StrictMode>
             <ErrorBoundary FallbackComponent={Error}>
                 <GapiProvider clientInitOptions={gapiClientInitOptions}>
-                    <Provider store={store}>
+                    <Provider store={setupStore()}>
                         <HashRouter>
                             <ThemeProvider theme={theme}>
                                 <App />
