@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import MUIDrawer from '@mui/material/Drawer';
 import MUIList from '@mui/material/List';
 import MUIListItem from '@mui/material/ListItem';
@@ -16,8 +14,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import syncGD from '../slices/extraThunks/syncGD';
-import useGapi from '../hooks/useGapi';
-import { SIDEBAR_WIDTH, TOKEN_CLIENT_CONFIG } from '../data';
+import { SIDEBAR_WIDTH } from '../data';
 import useSidebarVisibility from '../hooks/useSidebarVisibility';
 import { prettifyAmount } from '../utils';
 
@@ -70,10 +67,8 @@ const Links = () => {
 const Sync = () => {
     const dispatch = useAppDispatch();
     const syncStatus = useAppSelector((state) => state.gapi.syncStatus);
-    const tokenClientCallback = useCallback(() => dispatch(syncGD()), [dispatch]);
-    const tokenClient = useGapi({ tokenClientConfig: TOKEN_CLIENT_CONFIG, callback: tokenClientCallback });
 
-    const handleClick = () => tokenClient?.requestAccessToken();
+    const handleClick = () => dispatch(syncGD());
 
     return (
         <MUIList>

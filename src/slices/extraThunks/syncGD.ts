@@ -1,14 +1,11 @@
-import { type ThunkAction, type Action } from '@reduxjs/toolkit';
-
 import {
     dumpMatchings,
     dumpPayments,
     loadMatchingsFromString,
     loadPaymentsFromString,
 } from '../../services/payment_csv';
-import { createGD, downloadGD, searchGD, uploadGD } from '../../services/googleDrive';
 import { appendPayments } from '../payments';
-import { type RootState } from '../../store';
+import { type AppThunkAction } from '../../store';
 import { changeSyncStatus } from '../gapi';
 import { notify } from '../notification';
 import {
@@ -25,9 +22,10 @@ import { type Act } from '../../models/Act';
 import { appendActs } from '../acts';
 import { appendMatchings } from '../matchings';
 import { type Matching } from '../../models/Matching';
+import { type GoogleApi } from '../../gateways/GoogleApi';
 
-export default function syncGD(): ThunkAction<void, RootState, unknown, Action> {
-    return async function (dispatch, getState) {
+export default function syncGD(): AppThunkAction {
+    return async function (dispatch, getState, { googleApi }) {
         let state = getState();
 
         if (state.gapi.syncStatus === 'pending') {
@@ -39,20 +37,20 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
 
         console.debug('run sync');
         try {
-            const rootFolderId = await getOrCreateFolder({
+            const rootFolderId = await getOrCreateFolder(googleApi, {
                 name: GD_ROOT_FOLDER_NAME,
                 parentId: 'root',
             });
 
-            let paymentsFileId = await getFileId({
+            let paymentsFileId = await getFileId(googleApi, {
                 query: `name = '${GD_PAYMENT_CSV_NAME}' and '${rootFolderId}' in parents and trashed = false`,
             });
             if (paymentsFileId !== null) {
-                const rawCSV = await downloadGD({ fileId: paymentsFileId });
+                const rawCSV = await googleApi.downloadGD({ fileId: paymentsFileId });
                 dispatch(appendPayments(loadPaymentsFromString(rawCSV)));
                 state = getState();
             } else {
-                paymentsFileId = await createFileMetadata({
+                paymentsFileId = await createFileMetadata(googleApi, {
                     resource: {
                         name: GD_PAYMENT_CSV_NAME,
                         parents: [rootFolderId],
@@ -60,25 +58,25 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
                 });
             }
 
-            const actsFolderId = await getOrCreateFolder({
+            const actsFolderId = await getOrCreateFolder(googleApi, {
                 name: GD_ACTS_FOLDER_NAME,
                 parentId: rootFolderId,
             });
 
-            const newActs = await getActs({ parentId: actsFolderId });
+            const newActs = await getActs(googleApi, { parentId: actsFolderId });
             if (newActs.length > 0) {
                 dispatch(appendActs(newActs));
             }
 
-            let matchingsFileId = await getFileId({
+            let matchingsFileId = await getFileId(googleApi, {
                 query: `name = '${GD_MATCHING_CSV_NAME}' and '${rootFolderId}' in parents and trashed = false`,
             });
             if (matchingsFileId !== null) {
-                const rawCSV = await downloadGD({ fileId: matchingsFileId });
+                const rawCSV = await googleApi.downloadGD({ fileId: matchingsFileId });
                 dispatch(appendMatchings(loadMatchingsFromString(rawCSV)));
                 state = getState();
             } else {
-                matchingsFileId = await createFileMetadata({
+                matchingsFileId = await createFileMetadata(googleApi, {
                     resource: {
                         name: GD_MATCHING_CSV_NAME,
                         parents: [rootFolderId],
@@ -87,14 +85,14 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
             }
 
             if (hasPaymentsBeforeSync) {
-                await uploadGD({
+                await googleApi.uploadGD({
                     name: GD_PAYMENT_CSV_NAME,
                     fileId: paymentsFileId,
                     body: dumpPayments(
                         state.payments.ids.map((paymentId) => state.payments.entities[paymentId] as Payment),
                     ),
                 });
-                await uploadGD({
+                await googleApi.uploadGD({
                     name: GD_MATCHING_CSV_NAME,
                     fileId: matchingsFileId,
                     body: dumpMatchings(
@@ -118,8 +116,11 @@ export default function syncGD(): ThunkAction<void, RootState, unknown, Action> 
     };
 }
 
-async function getOrCreateFolder({ name, parentId }: { name: string; parentId: GD_FILE_ID }): Promise<GD_FILE_ID> {
-    const searchResult = await searchGD({
+async function getOrCreateFolder(
+    googleApi: GoogleApi,
+    { name, parentId }: { name: string; parentId: GD_FILE_ID },
+): Promise<GD_FILE_ID> {
+    const searchResult = await googleApi.searchGD({
         q: `mimeType = "${GD_FOLDER_MIMETYPE}" and name = "${name}" and trashed = false and "${parentId}" in parents`,
         fields: 'files(id)',
     });
@@ -134,7 +135,7 @@ async function getOrCreateFolder({ name, parentId }: { name: string; parentId: G
         throw new CustomError(`Директорію "${name}" знайдено, але інформація про неї невідома.`);
     }
 
-    const createResult = await createGD({
+    const createResult = await googleApi.createGD({
         resource: {
             name,
             mimeType: GD_FOLDER_MIMETYPE,
@@ -150,12 +151,15 @@ async function getOrCreateFolder({ name, parentId }: { name: string; parentId: G
     throw new CustomError(`Директорію "${name}" створено, але інформація про неї невідома.`);
 }
 
-async function createFileMetadata({
-    resource,
-}: {
-    resource: Parameters<typeof createGD>[0]['resource'];
-}): Promise<GD_FILE_ID> {
-    const createResult = await createGD({ resource, fields: 'id' });
+async function createFileMetadata(
+    googleApi: GoogleApi,
+    {
+        resource,
+    }: {
+        resource: Parameters<(typeof googleApi)['createGD']>[0]['resource'];
+    },
+): Promise<GD_FILE_ID> {
+    const createResult = await googleApi.createGD({ resource, fields: 'id' });
 
     if (createResult.id) {
         return createResult.id;
@@ -164,8 +168,8 @@ async function createFileMetadata({
     throw new CustomError(`Новий файл створено, але інформація про нього невідома.`);
 }
 
-async function getFileId({ query }: { query: string }): Promise<GD_FILE_ID | null> {
-    const searchResult = await searchGD({
+async function getFileId(googleApi: GoogleApi, { query }: { query: string }): Promise<GD_FILE_ID | null> {
+    const searchResult = await googleApi.searchGD({
         q: query,
         fields: 'files(id)',
     });
@@ -183,8 +187,8 @@ async function getFileId({ query }: { query: string }): Promise<GD_FILE_ID | nul
     throw new CustomError('Помилка отримання інформації про файл.');
 }
 
-async function getActs({ parentId }: { parentId: GD_FILE_ID }): Promise<Act[]> {
-    const searchResult = await searchGD({
+async function getActs(googleApi: GoogleApi, { parentId }: { parentId: GD_FILE_ID }): Promise<Act[]> {
+    const searchResult = await googleApi.searchGD({
         q: `mimeType = "${GD_PDF_MIMETYPE}" and "${parentId}" in parents and trashed = false`,
         fields: 'files(id, name, webViewLink)',
     });

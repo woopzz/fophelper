@@ -11,16 +11,10 @@ import { Provider } from 'react-redux';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { blueGrey } from '@mui/material/colors';
 
-import { App } from './components/App';
 import Error from './components/ErrorPage';
-import { GapiProvider } from './hooks/useGapi';
-import { API_KEY, DISCOVERY_DOC } from './data';
+import Gapi from './gateways/GoogleApi';
+import { App } from './components/App';
 import { setupStore } from './store';
-
-const gapiClientInitOptions = {
-    apiKey: API_KEY,
-    discoveryDocs: [DISCOVERY_DOC],
-};
 
 const theme = createTheme({
     palette: {
@@ -41,18 +35,19 @@ const theme = createTheme({
 const appNode = document.getElementById('app');
 if (appNode !== null) {
     const root = createRoot(appNode);
+    const store = setupStore({
+        googleApi: new Gapi(),
+    });
     root.render(
         <StrictMode>
             <ErrorBoundary FallbackComponent={Error}>
-                <GapiProvider clientInitOptions={gapiClientInitOptions}>
-                    <Provider store={setupStore()}>
-                        <HashRouter>
-                            <ThemeProvider theme={theme}>
-                                <App />
-                            </ThemeProvider>
-                        </HashRouter>
-                    </Provider>
-                </GapiProvider>
+                <Provider store={store}>
+                    <HashRouter>
+                        <ThemeProvider theme={theme}>
+                            <App />
+                        </ThemeProvider>
+                    </HashRouter>
+                </Provider>
             </ErrorBoundary>
         </StrictMode>,
     );
