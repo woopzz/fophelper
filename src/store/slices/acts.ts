@@ -1,7 +1,7 @@
 import { type PayloadAction, createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 
-import { type Act } from '../models/Act';
-import { type RootState } from '../store';
+import { type Act } from '../../models/Act';
+import { type RootState } from '..';
 
 const actsAdapter = createEntityAdapter<Act>({
     selectId: (act) => act.gdId,

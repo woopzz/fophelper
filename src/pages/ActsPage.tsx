@@ -7,7 +7,7 @@ import MUIPaper from '@mui/material/Paper';
 
 import { ListView } from '../components/ListView';
 import { type Act } from '../models/Act';
-import { selectAllActs } from '../slices/acts';
+import { selectAllActs } from '../store/slices/acts';
 
 export const ActsPage = () => {
     const allActs = useSelector(selectAllActs);

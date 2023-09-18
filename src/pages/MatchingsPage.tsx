@@ -12,9 +12,9 @@ import MUILinkOffIcon from '@mui/icons-material/LinkOff';
 
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import { type Matching } from '../models/Matching';
-import { removeMatching, selectAllMatchings } from '../slices/matchings';
-import { selectPaymentById } from '../slices/payments';
-import { selectActById } from '../slices/acts';
+import { removeMatching, selectAllMatchings } from '../store/slices/matchings';
+import { selectPaymentById } from '../store/slices/payments';
+import { selectActById } from '../store/slices/acts';
 
 export const MatchingsPage = () => {
     return (

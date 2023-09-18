@@ -13,7 +13,7 @@ import MUILinkIcon from '@mui/icons-material/Link';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../hooks/store';
-import syncGD from '../slices/extraThunks/syncGD';
+import syncGD from '../store/slices/extraThunks/syncGD';
 import { SIDEBAR_WIDTH } from '../data';
 import useSidebarVisibility from '../hooks/useSidebarVisibility';
 import { prettifyAmount } from '../utils';

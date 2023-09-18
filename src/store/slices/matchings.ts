@@ -1,9 +1,9 @@
 import { createEntityAdapter, createSelector, createSlice, type EntityId, type PayloadAction } from '@reduxjs/toolkit';
 
-import { calcMatchingId, type Matching } from '../models/Matching';
-import { type RootState } from '../store';
+import { calcMatchingId, type Matching } from '../../models/Matching';
+import { type RootState } from '..';
 
-type MatchingEssential = Omit<Matching, 'id' | 'active'>;
+export type MatchingEssential = Omit<Matching, 'id' | 'active'>;
 
 const matchingsAdapter = createEntityAdapter<Matching>({
     selectId: (matching) => matching.id,

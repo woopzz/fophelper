@@ -4,7 +4,7 @@ import MUIPaper from '@mui/material/Paper';
 
 import { ListView } from '../components/ListView';
 import { type Payment } from '../models/Payment';
-import { selectAllPayments } from '../slices/payments';
+import { selectAllPayments } from '../store/slices/payments';
 
 export const PaymentsPage = () => {
     const allPayments = useSelector(selectAllPayments);

@@ -4,7 +4,7 @@ import MUISnackbar from '@mui/material/Snackbar';
 import MUICloseIcon from '@mui/icons-material/Close';
 
 import { useAppDispatch, useAppSelector } from '../hooks/store';
-import { dismissNotification } from '../slices/notification';
+import { dismissNotification } from '../store/slices/notification';
 
 export const Notification = () => {
     const dispatch = useAppDispatch();

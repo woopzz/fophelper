@@ -2,6 +2,7 @@ import * as csv from 'jquery-csv';
 
 import { CSV_FIELD_TO_PAYMENT_CSV_FIELD, type Payment, createPayment } from '../models/Payment';
 import { type Matching } from '../models/Matching';
+import type { MatchingEssential } from '../store/slices/matchings';
 
 const csvOptions: csv.TOptions = {
     separator: ';',
@@ -19,7 +20,7 @@ export function loadMatchingsFromString(data: string): Array<{ paymentId: string
     return res.slice(1).map((x) => ({ paymentId: x[0], actId: x[1] }));
 }
 
-export function dumpMatchings(matchings: Matching[]): string {
+export function dumpMatchings(matchings: MatchingEssential[]): string {
     const csvArrays = [MATCHING_COLUMNS];
 
     for (const matching of matchings) {

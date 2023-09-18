@@ -2,10 +2,11 @@ import { combineReducers, configureStore, type Action, type ThunkAction } from '
 
 import PaymentReducer from './slices/payments';
 import ActReducer from './slices/acts';
-import MatchingsReducer from './slices/matchings';
+import MatchingsReducer, { type MatchingEssential } from './slices/matchings';
 import GapiReducer from './slices/gapi';
 import NotificationReducer from './slices/notification';
-import { type GoogleApi } from './gateways/GoogleApi';
+import type { Payment } from '../models/Payment';
+import type { Act } from '../models/Act';
 
 const rootReducer = combineReducers({
     payments: PaymentReducer,
@@ -15,13 +16,21 @@ const rootReducer = combineReducers({
     notification: NotificationReducer,
 });
 
-export function setupStore({ googleApi }: { googleApi: GoogleApi }) {
+export interface ExternalStorage {
+    getAllPayments: () => Promise<Payment[]>;
+    getAllActs: () => Promise<Act[]>;
+    getAllMatchings: () => Promise<MatchingEssential[]>;
+    setPayments: (payments: Payment[]) => Promise<void>;
+    setMatchings: (matchings: MatchingEssential[]) => Promise<void>;
+}
+
+export function setupStore({ extstorage }: { extstorage: ExternalStorage }) {
     return configureStore({
         reducer: rootReducer,
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: {
-                    extraArgument: { googleApi },
+                    extraArgument: { extstorage },
                 },
             }),
     });
@@ -31,6 +40,6 @@ export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = ReturnType<typeof setupStore>['dispatch'];
 
 type ThunkActionExtraArg = {
-    googleApi: GoogleApi;
+    extstorage: ExternalStorage;
 };
 export type AppThunkAction = ThunkAction<void, RootState, ThunkActionExtraArg, Action>;

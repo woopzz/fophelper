@@ -1,8 +1,8 @@
 import { createEntityAdapter, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { type Payment } from '../models/Payment';
-import { calcQuarter } from '../utils';
-import { type RootState } from '../store';
+import { type Payment } from '../../models/Payment';
+import { calcQuarter } from '../../utils';
+import { type RootState } from '..';
 
 const paymentsAdapter = createEntityAdapter<Payment>({
     selectId: (payment) => payment.docNo,

@@ -12,7 +12,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { blueGrey } from '@mui/material/colors';
 
 import Error from './components/ErrorPage';
-import Gapi from './gateways/GoogleApi';
+import GoogleApi from './gateways/GoogleApi';
 import { App } from './components/App';
 import { setupStore } from './store';
 
@@ -36,7 +36,7 @@ const appNode = document.getElementById('app');
 if (appNode !== null) {
     const root = createRoot(appNode);
     const store = setupStore({
-        googleApi: new Gapi(),
+        extstorage: new GoogleApi(),
     });
     root.render(
         <StrictMode>

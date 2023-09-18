@@ -22,11 +22,11 @@ import MUIUploadIcon from '@mui/icons-material/Upload';
 import useSidebarVisibility from '../hooks/useSidebarVisibility';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import type { EntityId } from '@reduxjs/toolkit';
-import { selectUnmatchedPayments } from '../slices/extraSelectors/selectUnmatchedPayments';
-import { selectAllActs } from '../slices/acts';
-import { appendMatchings } from '../slices/matchings';
+import { selectUnmatchedPayments } from '../store/slices/extraSelectors/selectUnmatchedPayments';
+import { selectAllActs } from '../store/slices/acts';
+import { appendMatchings } from '../store/slices/matchings';
 import { loadPaymentsFromFile } from '../services/payment_csv';
-import { appendPayments } from '../slices/payments';
+import { appendPayments } from '../store/slices/payments';
 
 export const ActionButtons = () => {
     const { permanent, setShowSidebar } = useSidebarVisibility();
