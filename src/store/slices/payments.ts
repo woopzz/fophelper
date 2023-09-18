@@ -35,7 +35,7 @@ export const paymentsSlice = createSlice({
     name: 'payments',
     initialState: initialState,
     reducers: {
-        appendPayments: (state, action: PayloadAction<Payment[]>) => {
+        addPayments: (state, action: PayloadAction<Payment[]>) => {
             paymentsAdapter.addMany(state, action.payload);
             state.lastFiscalPeriodInfo.total = calcLastFiscalPeriodTotal(state);
             state.averageIncome = calcAverageIncome(state);
@@ -43,7 +43,7 @@ export const paymentsSlice = createSlice({
     },
 });
 
-export const { appendPayments } = paymentsSlice.actions;
+export const { addPayments } = paymentsSlice.actions;
 
 export const { selectAll: selectAllPayments, selectById: selectPaymentById } = paymentsAdapter.getSelectors<RootState>(
     (state) => state.payments,

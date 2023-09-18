@@ -4,9 +4,9 @@ import { changeSyncStatus } from '../extstorage';
 import { notify } from '../notification';
 import { type Payment } from '../../../models/Payment';
 import { type Matching } from '../../../models/Matching';
-import { appendActs } from '../acts';
-import { appendPayments } from '../payments';
-import { appendMatchings } from '../matchings';
+import { addActs } from '../acts';
+import { addPayments } from '../payments';
+import { addMatchings } from '../matchings';
 
 export default function syncGD(): AppThunkAction {
     return async function (dispatch, getState, { extstorage }) {
@@ -23,18 +23,18 @@ export default function syncGD(): AppThunkAction {
         try {
             const newPayments = await extstorage.getAllPayments();
             if (newPayments.length > 0) {
-                dispatch(appendPayments(newPayments));
+                dispatch(addPayments(newPayments));
                 state = getState();
             }
 
             const newActs = await extstorage.getAllActs();
             if (newActs.length > 0) {
-                dispatch(appendActs(newActs));
+                dispatch(addActs(newActs));
             }
 
             const newMatchings = await extstorage.getAllMatchings();
             if (newMatchings.length > 0) {
-                dispatch(appendMatchings(newMatchings));
+                dispatch(addMatchings(newMatchings));
                 state = getState();
             }
 

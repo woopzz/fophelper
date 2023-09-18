@@ -24,9 +24,9 @@ import { useAppDispatch, useAppSelector } from '../hooks/store';
 import type { EntityId } from '@reduxjs/toolkit';
 import { selectUnmatchedPayments } from '../store/slices/extraSelectors/selectUnmatchedPayments';
 import { selectAllActs } from '../store/slices/acts';
-import { appendMatchings } from '../store/slices/matchings';
+import { addMatchings } from '../store/slices/matchings';
 import { loadPaymentsFromFile } from '../services/payment_csv';
-import { appendPayments } from '../store/slices/payments';
+import { addPayments } from '../store/slices/payments';
 
 export const ActionButtons = () => {
     const { permanent, setShowSidebar } = useSidebarVisibility();
@@ -88,7 +88,7 @@ const UploadPaymentsButton = () => {
         const files = ev.target.files;
         if (files !== null && files.length > 0) {
             const newPayments = await loadPaymentsFromFile(files[0]);
-            dispatch(appendPayments(newPayments));
+            dispatch(addPayments(newPayments));
         }
     };
 
@@ -133,7 +133,7 @@ const NewMatchingButton = () => {
 
     const handleCreate = () => {
         if (paymentId && actId) {
-            dispatch(appendMatchings([{ paymentId, actId }]));
+            dispatch(addMatchings([{ paymentId, actId }]));
             setPaymentId('');
             setActId('');
             setOpen(false);

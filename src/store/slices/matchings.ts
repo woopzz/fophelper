@@ -14,7 +14,7 @@ const matchingsSlice = createSlice({
     name: 'matchings',
     initialState: matchingsAdapter.getInitialState(),
     reducers: {
-        appendMatchings: (state, action: PayloadAction<MatchingEssential[]>) => {
+        addMatchings: (state, action: PayloadAction<MatchingEssential[]>) => {
             const matchings = action.payload.map((values) => makeMatching(values));
             matchingsAdapter.addMany(state, matchings);
         },
@@ -27,7 +27,7 @@ const matchingsSlice = createSlice({
     },
 });
 
-export const { appendMatchings, removeMatching } = matchingsSlice.actions;
+export const { addMatchings, removeMatching } = matchingsSlice.actions;
 
 const { selectAll } = matchingsAdapter.getSelectors<RootState>((state) => state.matchings);
 

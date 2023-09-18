@@ -14,13 +14,13 @@ const actsSlice = createSlice({
     name: 'acts',
     initialState,
     reducers: {
-        appendActs: (state, action: PayloadAction<Act[]>) => {
+        addActs: (state, action: PayloadAction<Act[]>) => {
             actsAdapter.addMany(state, action.payload);
         },
     },
 });
 
-export const { appendActs } = actsSlice.actions;
+export const { addActs } = actsSlice.actions;
 
 export const { selectAll: selectAllActs, selectById: selectActById } = actsAdapter.getSelectors<RootState>(
     (state) => state.acts,
