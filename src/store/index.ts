@@ -2,27 +2,17 @@ import { combineReducers, configureStore, type Action, type ThunkAction } from '
 
 import PaymentReducer from './slices/payments';
 import ActReducer from './slices/acts';
-import MatchingsReducer, { type MatchingEssential } from './slices/matchings';
-import GapiReducer from './slices/gapi';
+import MatchingsReducer from './slices/matchings';
+import extstorageReducer, { type ExternalStorage } from './slices/extstorage';
 import NotificationReducer from './slices/notification';
-import type { Payment } from '../models/Payment';
-import type { Act } from '../models/Act';
 
 const rootReducer = combineReducers({
     payments: PaymentReducer,
     acts: ActReducer,
     matchings: MatchingsReducer,
-    gapi: GapiReducer,
+    extstorage: extstorageReducer,
     notification: NotificationReducer,
 });
-
-export interface ExternalStorage {
-    getAllPayments: () => Promise<Payment[]>;
-    getAllActs: () => Promise<Act[]>;
-    getAllMatchings: () => Promise<MatchingEssential[]>;
-    setPayments: (payments: Payment[]) => Promise<void>;
-    setMatchings: (matchings: MatchingEssential[]) => Promise<void>;
-}
 
 export function setupStore({ extstorage }: { extstorage: ExternalStorage }) {
     return configureStore({

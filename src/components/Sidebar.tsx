@@ -66,7 +66,7 @@ const Links = () => {
 
 const Sync = () => {
     const dispatch = useAppDispatch();
-    const syncStatus = useAppSelector((state) => state.gapi.syncStatus);
+    const syncStatus = useAppSelector((state) => state.extstorage.syncStatus);
 
     const handleClick = () => dispatch(syncGD());
 

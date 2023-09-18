@@ -1,6 +1,6 @@
 import CustomError from '../../../models/CustomError';
 import { type AppThunkAction } from '../..';
-import { changeSyncStatus } from '../gapi';
+import { changeSyncStatus } from '../extstorage';
 import { notify } from '../notification';
 import { type Payment } from '../../../models/Payment';
 import { type Matching } from '../../../models/Matching';
@@ -12,7 +12,7 @@ export default function syncGD(): AppThunkAction {
     return async function (dispatch, getState, { extstorage }) {
         let state = getState();
 
-        if (state.gapi.syncStatus === 'pending') {
+        if (state.extstorage.syncStatus === 'pending') {
             return;
         }
         dispatch(changeSyncStatus('pending'));
