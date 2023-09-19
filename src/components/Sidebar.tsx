@@ -10,7 +10,7 @@ import MUIDescriptionIcon from '@mui/icons-material/Description';
 import MUISyncIcon from '@mui/icons-material/Sync';
 import MUILinkIcon from '@mui/icons-material/Link';
 
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import syncGD from '../store/slices/extraThunks/syncGD';
@@ -52,10 +52,17 @@ export const Sidebar = () => {
 };
 
 const Links = () => {
+    const location = useLocation();
     return (
-        <MUIList>
+        <MUIList role="navigation">
             {LINKS.map(({ label, to, icon }) => (
-                <MUIListItemButton component={RouterLink} to={to} key={to}>
+                <MUIListItemButton
+                    aria-current={location.pathname === to ? 'page' : undefined}
+                    aria-label={label}
+                    component={RouterLink}
+                    to={to}
+                    key={to}
+                >
                     <MUIListItemIcon>{icon}</MUIListItemIcon>
                     <MUIListItemText primary={label} />
                 </MUIListItemButton>

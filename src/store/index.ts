@@ -1,4 +1,4 @@
-import { combineReducers, configureStore, type Action, type ThunkAction } from '@reduxjs/toolkit';
+import { combineReducers, configureStore, type Action, type ThunkAction, type PreloadedState } from '@reduxjs/toolkit';
 
 import PaymentReducer from './slices/payments';
 import ActReducer from './slices/acts';
@@ -14,8 +14,15 @@ const rootReducer = combineReducers({
     notification: NotificationReducer,
 });
 
-export function setupStore({ extstorage }: { extstorage: ExternalStorage }) {
+export function setupStore({
+    extstorage,
+    preloadedState,
+}: {
+    extstorage: ExternalStorage;
+    preloadedState?: PreloadedState<RootState>;
+}) {
     return configureStore({
+        preloadedState,
         reducer: rootReducer,
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({

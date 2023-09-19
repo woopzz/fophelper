@@ -1,0 +1,6 @@
+{
+    "fakeTimers": {
+        "enableGlobally": true,
+        "now": 1680480000000
+    }
+}
