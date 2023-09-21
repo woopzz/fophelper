@@ -94,22 +94,43 @@ const Totals = () => {
     const averageIncome = useAppSelector((state) => state.payments.averageIncome);
     return (
         <MUIList>
-            <MUIListItem>
+            <MUIListItem aria-describedby="last-fiscal-period-total">
                 <MUIListItemText
                     primary={prettifyAmount({ number: lastFiscalPeriodInfo.total })}
                     secondary={`Дохід за ${lastFiscalPeriodInfo.quarter} квартал ${lastFiscalPeriodInfo.year} року`}
+                    primaryTypographyProps={{
+                        component: 'em',
+                        sx: { fontStyle: 'normal' },
+                    }}
+                    secondaryTypographyProps={{
+                        id: 'last-fiscal-period-total',
+                    }}
                 />
             </MUIListItem>
-            <MUIListItem>
+            <MUIListItem aria-describedby="current-year-average-payment">
                 <MUIListItemText
                     primary={prettifyAmount({ number: averageIncome.currentYear.total, unit: 'грн/міс.' })}
                     secondary={`Середній платіж за ${averageIncome.currentYear.year} рік`}
+                    primaryTypographyProps={{
+                        component: 'em',
+                        sx: { fontStyle: 'normal' },
+                    }}
+                    secondaryTypographyProps={{
+                        id: 'current-year-average-payment',
+                    }}
                 />
             </MUIListItem>
-            <MUIListItem>
+            <MUIListItem aria-describedby="previous-year-average-payment">
                 <MUIListItemText
                     primary={prettifyAmount({ number: averageIncome.previousYear.total, unit: 'грн/міс.' })}
                     secondary={`Середній платіж за ${averageIncome.previousYear.year} рік`}
+                    primaryTypographyProps={{
+                        component: 'em',
+                        sx: { fontStyle: 'normal' },
+                    }}
+                    secondaryTypographyProps={{
+                        id: 'previous-year-average-payment',
+                    }}
                 />
             </MUIListItem>
         </MUIList>
