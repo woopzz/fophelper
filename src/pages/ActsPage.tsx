@@ -35,8 +35,8 @@ function getActName(act: Act): string {
 
 function getActionActWebViewLink(act: Act): React.ReactNode {
     return (
-        <MuiLink href={act.gdWebViewLink} target="_blank" rel="noopener">
-            <MuiIconButton>
+        <MuiLink href={act.gdWebViewLink} aria-label="Посилання на Google Drive" target="_blank" rel="noopener">
+            <MuiIconButton aria-hidden>
                 <MuiOpenInNewIcon />
             </MuiIconButton>
         </MuiLink>

@@ -71,8 +71,8 @@ const MatchingsTableRow = ({ matching }: MatchingsTableRowProps) => {
             <MUITableCell>{payment.dateStr}</MUITableCell>
             <MUITableCell>{act.name}</MUITableCell>
             <MUITableCell align="right">
-                <MUIIconButton onClick={handleUnlink}>
-                    <MUILinkOffIcon />
+                <MUIIconButton aria-label="Видалити" onClick={handleUnlink}>
+                    <MUILinkOffIcon aria-hidden />
                 </MUIIconButton>
             </MUITableCell>
         </MUITableRow>
