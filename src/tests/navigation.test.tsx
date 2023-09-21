@@ -1,5 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/dom';
-import { userEvent } from '@testing-library/user-event';
+import { fireEvent, screen, waitFor, within } from '@testing-library/dom';
 
 import { getTableByAriaLabel, renderApp } from './common';
 
@@ -17,13 +16,13 @@ describe('Navigation', () => {
 
         const navigation = screen.getByRole('navigation');
 
-        userEvent.click(within(navigation).getByRole('link', { name: 'Платежі' }));
+        fireEvent.click(within(navigation).getByRole('link', { name: 'Платежі' }));
         await checkLandingOnPaymentsPage();
 
-        userEvent.click(within(navigation).getByRole('link', { name: 'Акти' }));
+        fireEvent.click(within(navigation).getByRole('link', { name: 'Акти' }));
         await checkLandingOnActsPage();
 
-        userEvent.click(within(navigation).getByRole('link', { name: 'Співставлення' }));
+        fireEvent.click(within(navigation).getByRole('link', { name: 'Співставлення' }));
         await checkLandingOnMatchingsPage();
     });
 });
