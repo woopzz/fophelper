@@ -27,6 +27,7 @@ import { selectAllActs } from '../store/slices/acts';
 import { addMatchings } from '../store/slices/matchings';
 import { loadPaymentsFromFile } from '../services/payment_csv';
 import { addPayments } from '../store/slices/payments';
+import { notify } from '../store/slices/notification';
 
 export const ActionButtons = () => {
     const { permanent, setShowSidebar } = useSidebarVisibility();
@@ -89,6 +90,7 @@ const UploadPaymentsButton = () => {
         if (files !== null && files.length > 0) {
             const newPayments = await loadPaymentsFromFile(files[0]);
             dispatch(addPayments(newPayments));
+            dispatch(notify({ message: 'Нові платежі завантажено', type: 'info' }));
         }
     };
 
