@@ -16,7 +16,8 @@
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "verbatimModuleSyntax": true
+        "verbatimModuleSyntax": true,
+        "types": ["node", "jest", "@testing-library/jest-dom"]
     },
     "include": ["src"]
 }

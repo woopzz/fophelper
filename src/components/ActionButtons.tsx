@@ -95,12 +95,10 @@ const UploadPaymentsButton = () => {
     };
 
     return (
-        <>
+        <MUIButton variant="outlined" startIcon={<MUIUploadIcon />} onClick={handleImportButtonClick}>
+            Завантажити CSV
             <MUIInput type="file" onChange={handleFileInputChange} inputRef={inputEl} sx={{ display: 'none' }} />
-            <MUIButton variant="outlined" startIcon={<MUIUploadIcon />} onClick={handleImportButtonClick}>
-                Завантажити CSV
-            </MUIButton>
-        </>
+        </MUIButton>
     );
 };
 

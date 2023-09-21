@@ -54,7 +54,7 @@ export default function syncGD(): AppThunkAction {
             console.error(error);
             dispatch(changeSyncStatus('failed'));
 
-            let message = 'Помилка синхронізації.';
+            let message = 'Помилка синхронізації';
             if (error instanceof CustomError && error.message) {
                 message = error.message;
             }

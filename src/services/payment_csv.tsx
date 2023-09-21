@@ -1,7 +1,6 @@
 import * as csv from 'jquery-csv';
 
 import { CSV_FIELD_TO_PAYMENT_CSV_FIELD, type Payment, createPayment } from '../models/Payment';
-import { type Matching } from '../models/Matching';
 import type { MatchingEssential } from '../store/slices/matchings';
 
 const csvOptions: csv.TOptions = {
