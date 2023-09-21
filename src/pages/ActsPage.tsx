@@ -15,6 +15,7 @@ export const ActsPage = () => {
     return (
         <MUIPaper>
             <ListView<Act>
+                name="Акти"
                 records={allActs}
                 fieldsInfo={[{ key: 'name', label: 'Назва', getDisplayValue: getActName }]}
                 getRecordKey={getActRecordKey}

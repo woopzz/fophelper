@@ -28,7 +28,7 @@ const MatchingsTable = () => {
     const allMatchings = useSelector(selectAllMatchings);
     return (
         <MUITableContainer>
-            <MUITable>
+            <MUITable aria-label="Співставлення">
                 <MUITableHead>
                     <MUITableRow>
                         <MUITableCell>Номер платежу</MUITableCell>

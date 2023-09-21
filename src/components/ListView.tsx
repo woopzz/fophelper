@@ -20,13 +20,14 @@ interface Action<M> {
 }
 
 interface ListViewProps<M> {
+    name: string;
     records: M[];
     getRecordKey: (record: M) => React.Key;
     fieldsInfo: FieldInfo<M>[];
     actions?: Action<M>[];
 }
 
-export const ListView = <M,>({ records, getRecordKey, fieldsInfo, actions = [] }: ListViewProps<M>) => {
+export const ListView = <M,>({ name, records, getRecordKey, fieldsInfo, actions = [] }: ListViewProps<M>) => {
     const headRowCells = fieldsInfo.map(({ key, label, align }) => (
         <MUITableCell key={key} align={align}>
             {label}
@@ -52,7 +53,7 @@ export const ListView = <M,>({ records, getRecordKey, fieldsInfo, actions = [] }
 
     return (
         <MUITableContainer>
-            <MUITable>
+            <MUITable aria-label={name}>
                 <MUITableHead>
                     <MUITableRow>{headRowCells}</MUITableRow>
                 </MUITableHead>

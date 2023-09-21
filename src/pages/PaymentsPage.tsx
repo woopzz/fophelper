@@ -11,6 +11,7 @@ export const PaymentsPage = () => {
     return (
         <MUIPaper>
             <ListView<Payment>
+                name="Платежі"
                 records={allPayments}
                 fieldsInfo={[
                     { key: 'dateStr', label: 'Дата', getDisplayValue: getPaymentDate },
