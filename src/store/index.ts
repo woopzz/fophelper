@@ -6,6 +6,8 @@ import MatchingsReducer from './slices/matchings';
 import extstorageReducer, { type ExternalStorage } from './slices/extstorage';
 import NotificationReducer from './slices/notification';
 
+export type { ExternalStorage };
+
 const rootReducer = combineReducers({
     payments: PaymentReducer,
     acts: ActReducer,
