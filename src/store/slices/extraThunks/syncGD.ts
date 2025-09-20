@@ -9,8 +9,19 @@ import { addPayments } from '../payments';
 import { addMatchings } from '../matchings';
 
 export default function syncGD(): AppThunkAction {
-    return async function (dispatch, getState, { extstorage }) {
+    return async function (dispatch, getState) {
         let state = getState();
+
+        const { proxy } = state.extstorage;
+        if (!proxy) {
+            dispatch(
+                notify({
+                    message: 'Синхронізацію скасовано. Взаємодія з Google сервісами не налаштована.',
+                    type: 'info',
+                }),
+            );
+            return;
+        }
 
         if (state.extstorage.syncStatus === 'pending') {
             return;
@@ -21,28 +32,26 @@ export default function syncGD(): AppThunkAction {
 
         console.debug('run sync');
         try {
-            const newPayments = await extstorage.getAllPayments();
+            const newPayments = await proxy.getAllPayments();
             if (newPayments.length > 0) {
                 dispatch(addPayments(newPayments));
                 state = getState();
             }
 
-            const newActs = await extstorage.getAllActs();
+            const newActs = await proxy.getAllActs();
             if (newActs.length > 0) {
                 dispatch(addActs(newActs));
             }
 
-            const newMatchings = await extstorage.getAllMatchings();
+            const newMatchings = await proxy.getAllMatchings();
             if (newMatchings.length > 0) {
                 dispatch(addMatchings(newMatchings));
                 state = getState();
             }
 
             if (hasPaymentsBeforeSync) {
-                extstorage.setPayments(
-                    state.payments.ids.map((paymentId) => state.payments.entities[paymentId] as Payment),
-                );
-                extstorage.setMatchings(
+                proxy.setPayments(state.payments.ids.map((paymentId) => state.payments.entities[paymentId] as Payment));
+                proxy.setMatchings(
                     state.matchings.ids
                         .map((matchingId) => state.matchings.entities[matchingId] as Matching)
                         .filter((matching) => matching.active),

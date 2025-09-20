@@ -24,6 +24,7 @@ import Error from './components/ErrorPage';
 import GoogleApi from './gateways/GoogleApi';
 import { App } from './components/App';
 import { setupStore } from './store';
+import { GOOGLE_API_KEY, GOOGLE_CLIENT_ID } from './data';
 
 const theme = createTheme({
     palette: {
@@ -44,9 +45,11 @@ const theme = createTheme({
 const appNode = document.getElementById('app');
 if (appNode !== null) {
     const root = createRoot(appNode);
-    const store = setupStore({
-        extstorage: new GoogleApi(),
-    });
+
+    const credentialsProvided = GOOGLE_CLIENT_ID.length > 0 && GOOGLE_API_KEY.length > 0;
+    const extstorage = credentialsProvided ? new GoogleApi(GOOGLE_CLIENT_ID, GOOGLE_API_KEY) : null;
+    const store = setupStore(extstorage);
+
     root.render(
         <StrictMode>
             <ErrorBoundary FallbackComponent={Error}>

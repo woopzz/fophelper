@@ -5,8 +5,6 @@ import { dumpMatchings, dumpPayments, loadMatchingsFromString, loadPaymentsFromS
 import { type ExternalStorage } from '../store';
 import { type MatchingEssential } from '../store/slices/matchings';
 
-const CLIENT_ID = '697960931943-v8ggr3cv0kgvs1euspf7t7orbe0ksghf.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyAQvT4ajswov4Cbf8-a-ZKucHc-ov3yauc';
 const SCOPE = 'https://www.googleapis.com/auth/drive';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
@@ -19,11 +17,18 @@ const GD_MATCHING_CSV_NAME = 'matchings.csv';
 const GD_ERROR_BAD_STATUS = 'Незадовільний статус відповіді';
 
 export default class GoogleApi implements ExternalStorage {
+    private clientId: string;
+    private apiKey: string;
     private inited = false;
     private rootFolderId: GD_FILE_ID | null = null;
     private actsFolderId: GD_FILE_ID | null = null;
     private paymentsFileId: GD_FILE_ID | null = null;
     private matchingsFileId: GD_FILE_ID | null = null;
+
+    constructor(clientId: string, api_key: string) {
+        this.clientId = clientId;
+        this.apiKey = api_key;
+    }
 
     async getAllPayments() {
         await this.setupPaymentsFileId();
@@ -100,7 +105,6 @@ export default class GoogleApi implements ExternalStorage {
 
     private async setupPaymentsFileId() {
         if (this.paymentsFileId === null) {
-            // TODO Smth like ensure.*
             await this.setupRootFolderId();
             this.paymentsFileId = await this.getOrCreateFile({
                 name: GD_PAYMENT_CSV_NAME,
@@ -255,7 +259,7 @@ export default class GoogleApi implements ExternalStorage {
         return this.load().then(() => {
             return new Promise((resolve, reject) => {
                 const tokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: CLIENT_ID,
+                    client_id: this.clientId,
                     scope: SCOPE,
                     callback: (tokenResponse) => {
                         const accessToken = tokenResponse && tokenResponse.access_token;
@@ -279,7 +283,7 @@ export default class GoogleApi implements ExternalStorage {
                 callback: () =>
                     gapi.client
                         .init({
-                            apiKey: API_KEY,
+                            apiKey: this.apiKey,
                             discoveryDocs: DISCOVERY_DOCS,
                         })
                         .then(

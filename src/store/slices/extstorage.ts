@@ -11,12 +11,17 @@ export interface ExternalStorage {
     setMatchings: (matchings: MatchingEssential[]) => Promise<void>;
 }
 
+type SYNC_STATUS = 'idle' | 'pending' | 'succeeded' | 'failed';
+export const DEFAULT_SYNC_STATUS: SYNC_STATUS = 'idle';
+
 interface State {
-    syncStatus: 'idle' | 'pending' | 'succeeded' | 'failed';
+    proxy: ExternalStorage | null;
+    syncStatus: SYNC_STATUS;
 }
 
-const initialState: State = {
-    syncStatus: 'idle',
+export const initialState: State = {
+    proxy: null,
+    syncStatus: DEFAULT_SYNC_STATUS,
 };
 
 export const extstorageSlice = createSlice({
@@ -24,7 +29,9 @@ export const extstorageSlice = createSlice({
     initialState,
     reducers: {
         changeSyncStatus: (state, action: PayloadAction<State['syncStatus']>) => {
-            state.syncStatus = action.payload;
+            if (state.proxy) {
+                state.syncStatus = action.payload;
+            }
         },
     },
 });

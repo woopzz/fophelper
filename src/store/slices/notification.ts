@@ -1,7 +1,7 @@
-import { type Action, type PayloadAction, type ThunkAction, createSlice } from '@reduxjs/toolkit';
+import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { NOTIFICATION_DELAY_MS } from '../../data';
-import { type RootState } from '..';
+import { type AppThunkAction } from '..';
 
 type Notification = {
     message: string;
@@ -39,7 +39,7 @@ export { dismissNotification };
 
 export default notificationSlice.reducer;
 
-export function notify(notification: Omit<Notification, 'timeoutId'>): ThunkAction<void, RootState, unknown, Action> {
+export function notify(notification: Omit<Notification, 'timeoutId'>): AppThunkAction {
     return async function (dispatch) {
         const timeoutId = setTimeout(() => dispatch(dismissNotification()), NOTIFICATION_DELAY_MS);
         dispatch(addNotification({ ...notification, timeoutId }));
